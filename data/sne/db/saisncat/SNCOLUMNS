@@ -1,0 +1,93 @@
+
+   Column  Object         Description of column
+
+   (1)     SN             SN designation
+
+   (2)     Gal            Galaxy designation
+
+   (3)     Gal            Uncertainty of host galaxy identification 
+                          is indicated by code   1
+
+   (4)     Gal            Right Ascension (2000.0)
+
+   (5)     Gal            Declination (2000.0)
+
+   (6)     Gal            Magnitude
+
+   (7)     Gal            Magnitude band
+
+   (8)     Gal            Source of magnitude
+
+   (9)     Gal            Position angle in degrees measured from 
+                          the North to the East
+
+   (10)    Gal            Inclination  angle in degrees for disk-like 
+                          systems (i = 0 for face-on systems)
+
+   (11)    Gal            Redshift
+
+   (12)    Gal            Morphological type
+
+   (13)    Gal            Decimal log of axial ratio (major axis 
+                          divided by minor axis)
+
+   (14)    Gal            Decimal  log  of  apparent  isophotal  
+                          major  diameter in units of 0.1 arcminute
+
+   (15)    Gal            Numerical code of morphological type as 
+                          in LEDA
+
+   (16)    Gal            Error of numerical code of morphological 
+                          type as in LEDA
+
+   (17)    SN             E/W  offset  of  SN in arcseconds from the 
+                          nucleus of the host galaxy, with positive sign 
+                          for eastern direction
+
+   (18)    SN             Same  as  Col.  (17)  for  N/S offset, with 
+                          positive sign for northern direction
+
+   (19)    SN             Magnitude
+
+   (20)    SN             Description  of  magnitude:  code 1 is for 
+                          magnitude at maximum light, code 2 is for 
+                          magnitude estimated at any phase of SN evolution
+
+   (21)    SN             The name of the standard band in which the 
+                          magnitude was derived
+
+   (22)    SN             Quality of magnitude: code 1 is for uncertain 
+                          magnitude estimate
+
+   (23)    SN             Method of SN discovery: code 1 is for SNe 
+                          discovered photographically, code 2 is for all 
+                          other kinds of discoveries
+
+   (24)    SN             Date of maximum light
+
+   (25)    SN             Date of discovery
+
+   (26)    SN             Type of SN
+
+   (27)    SN             Uncertainty  in  determination  of SN type. 
+                          Code 1 is for uncertain SN type,  code  2  is  
+                          for  peculiar SN type, code 3 is for uncertain 
+                          and peculiar SN type
+
+   (28)    SN             Right Ascension (2000.0)
+
+   (29)    SN             Declination (2000.0)
+
+   (30)    SN             Uncertainty of SN. Doubtful SNe are indicated 
+                          by code 1
+
+   (31)    SN             Code for SN search programme or observatory 
+                          where SN was discovered
+
+   (32)    SN             Names of SN discoverers
+
+   (33)    SN             Comments on SN
+
+   (34)    Gal            Comments on the host galaxy
+
+   (35)    -              Dates of data modifications

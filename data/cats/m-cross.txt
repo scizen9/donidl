@@ -1,0 +1,111 @@
+  M1,  NGC1952,  GC 1157,  h  357,  Bode 11,  Taurus A,  3C144,  4C+21.19, Taurus X-1, G184.6-5.8 Crab Pulsar:  NP0532, PSR 0531+21 Crab Supernova:  SN 1054,  CM Tauri
+  M2,  NGC7089,  GC 4678,  h 2125,  Lalande 41928,  Bode 70,  Koehler No. 14,  Mel 235
+  M3,  NGC5272,  GC 3636,  h 1663,  Mel 119
+  M4,  NGC6121,  GC 4183,  Lac I.9,  deCh 19,  Bode 31,  B.A.C. 5455,  Mel 144
+  M5,  NGC5904,  GC 4083,  h 1916,  Bode 29,  Koehler No. 13,  Mel 133
+  M6,  NGC6405,  GC 4318,  h 3699,  Dunlop 612,  Lac III.12,  deCh  1,  Ha II.4,  Bode 39,  Mel 178,  Cr 341
+  M7,  NGC6475,  GC 4340,  h 3710,  Lac II.14,  Ha II.2,  Bode 41,  Ptolemy 567,  Ulegh Begh 564,  Halley 29,  Mel 183,  Cr 354
+  M8,  NGC6523,  GC 4361,  h 3722,  Lac III.13,  deCh  8,  Bode 44,  Bode 45 ?,  Koehler No. 3
+  M9,  NGC6333,  GC 4287,  h 1979,  h 3677,  Bode 36,  Mel 167
+ M10,  NGC6254,  GC 4256,  h 1972,  h 3659,  Bode 33,  Koehler No. 4,  Mel 157
+ M11,  NGC6705,  GC 4437,  h 2019,  deCh 14,  Bode 62,  Koehler No. 20,  Mel 213
+ M12,  NGC6218,  GC 4238,  h 1971,  Bode 32,  Koehler No. 5,  Mel 151
+ M13,  NGC6205,  GC 4230,  h 1968,  Halley,  Bode 30,  Koehler No. 18,  Mel 150
+ M14,  NGC6402,  GC 4315,  h 1983,  h 3698,  Bode 37,  Mel 175
+ M15,  NGC7078,  GC 4670,  h 2120,  Lalande 40815,  Bode 71,  Koehler No. 15,  Struve 9,  Mel 234
+ M16,  NGC6611,  GC 4400,  h 2006,  deCh  4,  Bode 52,  Mel 198
+ M17,  NGC6618,  GC 4403,  h 2008,  deCh 20,  Bode 54
+ M18,  NGC6613,  GC 4401,  h 2007,  Bode 53
+ M19,  NGC6273,  GC 4264,  h 1975,  h 3663,  Bode 35,  Mel 160
+ M20,  NGC6514,  GC 4355,  h 1991,  h 3718,  H IV.41,  H V.10,  H V.11,  H V.12,  Bode 47
+ M21,  NGC6531,  GC 4367,  h 1993,  Bode 50,  Mel 188
+ M22,  NGC6656,  GC 4424,  h 2015,  h 3753,  Lac I.12,  deCh 17,  Bode 57,  Koehler No. 1,  Mel 208
+ M23,  NGC6494,  GC 4346,  h 1990,  Bode 42,  Mel 184,  Cr 356
+ M24,  NGC6603,  IC4715?,  GC 4397 (MWP M24),  h 2004,  Bode 51, Mel 197,  Cr 374
+ M25,  IC4725,  deCh  5,  Bode 56,  Bailey,  Mel 204
+ M26,  NGC6694,  GC 4432,  h 3758,  Bode 59,  Mel 212
+ M27,  NGC6853,  GC 4532,  h 2060,  Bode 67,  Koehler No. 7,  PK 60-3.1,  ARO 14,  He2-452
+ M28,  NGC6626,  GC 4406,  h 2010,  h 3743,  Bode 58 ?,  Koehler No. 2,  Mel 200
+ M29,  NGC6913,  GC 4576,  h 2078,  Bode 69
+ M30,  NGC7099,  GC 4687,  h 2128,  h 3878,  Bode 68,  Mel 237
+ M31,  NGC224,  GC  116,  h   50,  Ha III.3,  Bode  3,  Flamsteed 58,  Hevelius 32,  UGC 454,  Andromeda A
+ M32,  NGC221,  GC  117,  h   51,  Bode  2,  Struve 1,  UGC 452,  Arp 168
+ M33,  NGC598,  GC  352,  h  131,  H V.17,  Ha IV.4?,  Bode  5,  UGC 1117, NGC  604 (bright HII region):  GC  355,  h  133,  H III.150
+ M34,  NGC1039,  GC  584,  h  248,  Ha IV.12,  Bode  7,  Mel  17,  Cr  31
+ M35,  NGC2168,  GC 1360,  h  377,  deCh 12,  Bode 14,  Mel  41,  Cr  82
+ M36,  NGC1960,  GC 1166,  h  358,  Ha II.7,  Bode 12,  Koehler No. 10,  Mel  37,  Cr  71
+ M37,  NGC2099,  GC 1295,  h  369,  Ha II.7,  Bode 13,  Mel  38,  Cr  75
+ M38,  NGC1922,  GC 1119,  Ha II.7,  Bode 9,  Koehler No. 11,  Mel  36,  Cr  67
+ M39,  NGC7092,  GC 4681,  h 2126,  Bode 75,  Mel 236
+ M40,             Winnecke 4 (Win 4, WNC 4),  Bode 23, 74 & 75 UMa = Hevelius 1496,  Bode 24
+ M41,  NGC2287,  GC 1454,  h  411,  Ha IV.2,  Flamsteed 965,  Bode 15,  Mel  52,  Cr 118
+ M42,  NGC1976,  GC 1179,  h  360,  deCh 16,  Ha I.5,  Bode 10,   Flamsteed 748,  Orion A
+ M43,  NGC1982,  GC 1185,  H III.1?
+ M44,  NGC2632,  GC 1681,  h  517,  deCh 11,  Ha II.1,  Ptolemy  449,  Ulegh Begh 446,  Tycho 576,  Hevelius 291,  Flamsteed 1213,  Bode 20,  Mel 88,  Cr 189
+ M45,             Ha I.1,  Bode  8,  Bailey,  Mel  22,  Cr  42, NGC1435 = Merope Nebula:  GC  768,  Auwers N.18,  Tempel's neb, NGC1432 = Maia Nebula, IC349 = Part of Merope Nebula
+ M46,  NGC2437,  GC 1564,  h  463,  Mel  75,  Cr 159
+ M47,  NGC2422,  GC 1551,  h  459,  h 3088,  H VIII.38,  Ha IV.1,  Mel  68,  Cr 152, NGC2478 = erroneous M47 position:  GC 1594
+ M48,  NGC2548,  GC 1637,  h  496,  H VI.22,  C.H.,  Bode (1782),  Mel  85,  Cr 179
+ M49,  NGC4472,  GC 3021,  h 1294,  Oriani,  Arp 134,  UGC 7629
+ M50,  NGC2323,  GC 1483,  h  425,  Bode 16,  Mel  58,  Cr 124
+ M51A, NGC5194,  GC 3572,  h 1622,  Bode 25,  Arp  85,  UGC 8493
+ M51B, NGC5195,  GC 3574,  h 1623,  H I.186,  Arp 85,  UGC 8494
+ M52,  NGC7654,  GC 4957,  h 2238,  Mel 243,  Cr 455
+ M53,  NGC5024,  GC 3453,  h 1558,  Bode 26,  Struve 4,  Mel 117
+ M54,  NGC6715,  GC 4442,  h 3763,  Dunlop 624,  Mel 216
+ M55,  NGC6809,  GC 4503,  h 3798,  Dunlop 620,  Lac I.14,  Bode 63,  Mel 221
+ M56,  NGC6779,  GC 4485,  h 2036,  Mel 220
+ M57,  NGC6720,  GC 4447,  h 2023,  Darquier,  PK 63+13.1, ARO 9
+ M58,  NGC4579,  GC 3121,  h 1368,  UGC 7792
+ M59,  NGC4621,  GC 3155,  h 1386,  Koehler,  UGC 7858
+ M60,  NGC4649,  GC 3182,  h 1408,  Oriani,  Koehler,  Arp 116,  UGC 7898,  VV 206
+ M61,  NGC4303,  GC 2878,  h 1202,  H I.139,  Oriani,  UGC 7420
+ M62,  NGC6266,  GC 4261,  h 3661,  Dunlop 627,  Mel 159
+ M63,  NGC5055,  GC 3474,  h 1570,  UGC 8334
+ M64,  NGC4826,  GC 3321,  h 1486,  Bode 77,  UGC 8062,  PKS 1254+21
+ M65,  NGC3623,  GC 2373,  h  854,  Arp 317,  UGC 6328,  VV 308
+ M66,  NGC3627,  GC 2377,  h  857,  h  875?,  Arp  16,  Arp 317,  UGC 6346,  VV 308, PKS 1117+132
+ M67,  NGC2682,  GC 1712,  h  531,  Koehler No. 19,  Mel  94,  Cr 204
+ M68,  NGC4590,  GC 3128,  h 3404,  Mel 113
+ M69,  NGC6637,  GC 4411,  h 3747,  Dunlop 613,  Mel 202
+ M70,  NGC6681,  GC 4428,  h 3756,  Dunlop 614,  Mel 211
+ M71,  NGC6838,  GC 4520,  h 2056,  deCh 13,  Koehler No. 7,  Mel 226
+ M72,  NGC6981,  GC 4608,  h 2090,  Mel 233
+ M73,  NGC6994,  GC 4617
+ M74,  NGC628,  GC  372,  h  142,  UGC 1149
+ M75,  NGC6864,  GC 4543,  h 2064,  Mel 228
+ M76,  NGC650,  GC  385,  PK 130-10.1,  ARO 2
+ M77,  NGC1068,  GC  600,  h  262,  Arp 37,  UGC 2188,  Cetus A,  3C71,  4C-00.13,  PKS 0240-002
+ M78,  NGC2068,  GC 1267,  h  368
+ M79,  NGC1904,  GC 1112,  Mel 34
+ M80,  NGC6093,  GC 4173,  h 3624,  Mel 142
+ M81,  NGC3031,  GC 1949,  h  649,  Bode 17,  Koehler No. 8A,  UGC 5318
+ M82,  NGC3034,  GC 1950,  H IV.79,  Bode 18,  Koehler No. 8B,  4H.ON.,  Arp 337,  UGC 5322,  Ursa Major A,  3C231
+ M83,  NGC5236,  GC 3606,  h 3523,  Dunlop 628,  Lac I.6,  Bode 27,  UGCA 366
+ M84,  NGC4374,  GC 2930,  h 1237,  UGC 7494,  3C272.1
+ M85,  NGC4382,  GC 2946,  h 1242,  UGC 7508
+ M86,  NGC4406,  GC 2961,  h 1253,  UGC 7532
+ M87,  NGC4486,  GC 3035,  h 1301,  Arp 152,  UGC 7654,  Virgo A,  3C274
+ M88,  NGC4501,  GC 3049,  h 1312,  UGC 7675
+ M89,  NGC4552,  GC 3097,  h 1348,  UGC 7760
+ M90,  NGC4569,  GC 3111,  Arp 76,  UGC 7786
+ M91,  NGC4548,  GC 3093,  h 1345,  H II.120,  UGC 7753
+ M92,  NGC6341,  GC 4294,  Bode 76,  Lalande 31544,  Mel 168
+ M93,  NGC2447,  GC 1571,  h 3098,  Mel  76,  Cr 160
+ M94,  NGC4736,  GC 3258,  h 1456,  UGC 7996
+ M95,  NGC3351,  GC 2184,  h  743,  UGC  5850, 3C 245
+ M96,  NGC3368,  GC 2194,  h  749,  UGC  5882
+ M97,  NGC3587,  GC 2343,  h  838,  PK 148+57.1,  ARO 25
+ M98,  NGC4192,  GC 2786,  h 1132,  UGC 7231
+ M99,  NGC4254,  GC 2838,  h 1173,  UGC 7345
+M100,  NGC4321,  GC 2890,  h 1211,  UGC 7450
+M101,  NGC5457,  GC 3770,  h 1744,  Arp 26,  UGC 8981
+M102,  NGC5866,  GC 4058,  h 1909,  H I.215,  UGC 9723
+M103,  NGC581,  GC  341,  h  126,  Struve 131,  Mel  8,  Cr  14
+M104,  NGC4594,  GC 3132,  h 1376,  H I.43,  UGCA 293
+M105,  NGC3379,  GC 2203,  h  757,  H I.17,  UGC 5902
+M106,  NGC4258,  GC 2841,  h 1175,  H V.43,  UGC 7353
+M107,  NGC6171,  GC 4211,  h 3637,  H VI.40,  Mel 148
+M108,  NGC3556,  GC 2318,  h  831,  H V.46,  UGC 6225
+M109,  NGC3992,  GC 2635,  h 1030,  H IV.61,  UGC 6937
+M110,  NGC205,  GC  105,  h   44,  H V.18,  C.H.,  UGC 426

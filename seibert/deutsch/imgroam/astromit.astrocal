@@ -1,0 +1,301 @@
+PRO astromit,xpos,ypos,ref_ra,ref_dec,hdr
+;PRO uitcoord, hdr, ref_ra, ref_dec, xpos, ypos, x_coeff, y_coeff,crval
+;---------------------------------------------------------------------
+;+
+;NAME:
+;      UITCOORD
+;PURPOSE:
+;      Compute astrometric calibration
+;CALLING SEQUENCE:
+;      UITCOORD, HDR, REF_RA, REF_DEC, XPOS, YPOS, X_COEFF, Y_COEFF, CRVAL
+;INPUTS:
+;      HDR - FITS header must contain a linear astrometry solution
+;      REF_RA,REF_DEC - Vectors contain the RA and Dec (in DEGREES) of a set
+;            of reference points
+;      XPOS,YPOS - Vectors giving the X,Y positions of the reference poits
+;OUTPUTS:
+;      XCOEFF,YCOEFF  - 13 element array giving the X and Y terms of the 
+;               best-fit non-linear solution
+;       
+;MODIFICATION HISTORY
+;      In progress, W. Landsman       June, 1991
+;      Adapted from ASTROCAL 10th June 1986 BJM
+;-
+if N_params() LT 5 then begin
+     print,'Calling Sequence -  uitcoord, h, ref_ra, ref_dec, xpos, ypos, x_term, y_term
+     return
+endif
+radeg = 180.d/!DPI
+PlotWin=-1
+; Declare variables
+;
+iterate='T'
+command=' '
+no_astro_ref_stars = N_elements(xpos)
+
+astro_ref_flag  = replicate(1, no_astro_ref_stars)
+weight = replicate(1., no_astro_ref_stars)
+;------------------------------------------------------------------------
+; Plate model description
+;
+model_term=strarr(14)
+model_term=['x                   ',	$
+	    'y                   ',	$
+	    'x**2                ',	$
+            'x*y                 ',	$
+	    'y**2                ',     $
+	    'x*x+y*y             ',	$
+	    'x**3                ',	$
+	    'x*x*y               ',	$
+            'x*y*y               ',	$
+	    'y**3                ',	$
+	    'x*(x*x+y*y)         ',	$
+	    'x*(x*x+y*y)**2      ',	$
+	    'y*(x*x+y*y)         ',	$
+	    'y*(x*x+y*y)**2      '	]
+plate_model=[1,1,0,0,0,0,0,0,0,0,0,0,0,0]
+model_change=' '
+term_enable=' '
+x_term = dblarr(no_astro_ref_stars,14)
+y_term = dblarr(no_astro_ref_stars,14)
+xcen = sxpar(hdr,'NAXIS1')/2. - 0.5
+ycen = sxpar(hdr,'NAXIS2')/2. - 0.5
+;------------------------------------------------------------------------
+; Compute standard coords and convert from pixels to mm
+;
+xyad,hdr,xcen,ycen,crval1,crval2
+crval1 = crval1/RADEG  & crval2 = crval2/RADEG
+ref_x =  (  xpos - xcen)
+ref_y =  (  ypos - ycen)
+a = ref_ra/RADEG    &  d = ref_dec/RADEG  
+;
+; Convert input RA and Dec to eta and xi
+;
+ITERATE:
+radif = a - crval1
+denom = (sin(d)*sin(crval2) + cos(d)*cos(crval2)*cos(radif))
+ref_xi = 3600.*RADEG*cos(d)*sin(radif)/denom
+ref_eta = 3600.*RADEG*(sin(d)*cos(crval2) - cos(d)*sin(crval2)*cos(radif))/denom
+
+;------------------------------------------------------------------------
+; Start iteration loop
+;
+;------------------------------------------------------------------------
+; Give plate model and option to change it.
+;
+	print,' '
+	print,'Current Plate Model :-'
+	for k=0,13 do print,f="(1x,i3,2x,a20)",plate_model(k),model_term(k)
+	print,' '
+	read,'Do you wish to change the plate model (y/n): ',model_change
+	model_change=strmid(strupcase(model_change),0,1)
+	      if (model_change eq 'Y') then begin
+                print,'Click mouse on term to include/remove'
+         TERMS: menu = string(indgen(14),f='(i2)') +' '+  model_term + ' ' + $
+                strtrim(plate_model,2)
+                ans = wmenu([menu,'14 Continue with Solution'])
+                if ans EQ 14 then goto,SOLUTION
+                plate_model(ans)= 1 - plate_model(ans)
+                goto,TERMS
+	endif
+SOLUTION:
+;------------------------------------------------------------------------
+; Form plate model terms
+;
+	x_term(0,0) = ref_x
+	x_term(0,1) = ref_y
+	x_term(0,2) = ref_x^2
+	x_term(0,3) = ref_x*ref_y
+	x_term(0,4) = ref_y^2
+	x_term(0,5) = ref_x^2+ref_y^2
+	x_term(0,6) = ref_x^3
+	x_term(0,7) = ref_x^2*ref_y
+	x_term(0,8) = ref_x*ref_y^2
+	x_term(0,9 ) = ref_y^3
+	x_term(0,10) = ref_x*(ref_x^2+ref_y^2)
+	x_term(0,11) = ref_x*(ref_x^2+ref_y^2)^2
+	x_term(0,12) = ref_y*(ref_x^2+ref_y^2)
+	x_term(0,13) = ref_y*(ref_x^2+ref_y^2)^2
+;
+	y_term(0,0) = ref_x
+	y_term(0,1) = ref_y
+	y_term(0,2) = ref_x^2
+	y_term(0,3) = ref_x*ref_y
+	y_term(0,4) = ref_y^2
+	y_term(0,5) = ref_x^2+ref_y^2
+	y_term(0,6) = ref_x^3
+	y_term(0,7) = ref_x^2*ref_y
+	y_term(0,8) = ref_x*ref_y^2
+	y_term(0,9 ) = ref_y^3
+	y_term(0,10) = ref_x*(ref_x^2+ref_y^2)
+	y_term(0,11) = ref_x*(ref_x^2+ref_y^2)^2
+	y_term(0,12) = ref_y*(ref_x^2+ref_y^2)
+	y_term(0,13) = ref_y*(ref_x^2+ref_y^2)^2
+;
+	no_terms=total(plate_model)
+	x_array = dblarr(no_terms,no_astro_ref_stars)
+	y_array = dblarr(no_terms,no_astro_ref_stars)
+;
+	term = 0
+	for k = 0,13 do begin
+	if plate_model(k) EQ 1 then begin
+	for star=0,no_astro_ref_stars-1 do begin
+		x_array(term,star)=x_term(star,k)
+		y_array(term,star)=y_term(star,k)
+	endfor
+	term=term+1
+	endif
+	endfor
+;------------------------------------------------------------------------
+; Check for sufficient no stars
+;
+	term = total(plate_model)
+	no_eq=0
+	for star=0,no_astro_ref_stars-1 do begin
+		if astro_ref_flag(star) EQ 1 then no_eq=no_eq+1
+	endfor
+;------------------------------------------------------------------------
+; Tell us there are insufficient stars
+;
+	if (no_eq-2) LT term then begin
+		print,'Not enough reference stars for chosen plate model'
+		print,'Lower no. of terms or add more reference stars...'
+                goto, menu
+        endif
+;------------------------------------------------------------------------
+; Fit plate model to data
+;
+	astro_x_coeffs = $
+            regress(x_array,ref_xi,weight,xi_calc,xc,x_sigma,/REL)
+	astro_y_coeffs = $
+            regress(y_array,ref_eta,weight,eta_calc,yc,y_sigma,/REL)
+;------------------------------------------------------------------------
+; Calculate residuals
+;
+	xi_res = ref_xi - xi_calc
+	eta_res = ref_eta - eta_calc
+        nstar = total(weight)
+        xi_sigma =  sqrt( total(xi_res^2)/nstar)
+        eta_sigma = sqrt(total(eta_res^2)/nstar)
+;------------------------------------------------------------------------
+; Print solution
+;
+printsol:term=0
+        print,' '
+	print,f="(' rms error (arcsec)',2x,f8.3,20x,f8.3)",xi_sigma,eta_sigma
+	print,' '
+	print,'Plate Solution          Xi              err         ',$
+	      'Eta             err'
+        print,' Offset ',xc,yc,f = '(A,15x,e12.5,16x,e12.5)'
+	for k=0,13 do begin
+	if plate_model(k) EQ 1 then begin
+		print,f="(1x,a20,2x,e12.5,2x,e12.5,2x,e12.5,2x,e12.5)",  $
+    		      model_term(k),astro_x_coeffs(term),x_sigma(term), $
+		      astro_y_coeffs(term),y_sigma(term)
+	        term=term+1
+	endif
+	endfor
+if (!D.FLAGS and 256) NE 256 then return      ;Support X windows?
+;------------------------------------------------------------------------
+; Plot residuals
+;
+	if (PlotWin eq -1) then begin 
+          win_alloc,PlotWin & win_open,PlotWin,300,300,500,500,'Plot Window'
+          endif
+	good = where(astro_ref_flag EQ 1)
+menu:   iselect = wmenu (['Select 1 option', 'Plot Xi res vs. X', $
+        'Plot Xi res vs. Y', 'Plot Eta Res vs. X', 'Plot Eta Res vs. Y', $
+        'Plot eta res vs. xi res', 'Print Plate Solution', $
+        'Print individual Residuals','Exclude a star','Include a star',$
+        'Accept this solution', 'Repeat Least Squares Fit', 'Quit'] )
+      Case iselect of 
+       1: plot,xpos(good),xi_res(good),psym=2, $ 
+              ytit = 'xi res',xtit = 'X position'
+;
+       2: plot,xpos(good),eta_res(good),psym=2, $
+                  xtit='X position',ytit='Eta Res'
+;
+       3: plot,ypos(good),xi_res(good),psym=2,xtit = 'Y position', $
+                ytit = 'Xi res'
+;
+       4: plot,ypos(good),eta_res(good),psym=2, $
+                  xtit = 'Y position',ytit="Eta res"
+;
+       5: plot,xi_res(good),eta_res(good),psym=2
+
+       6: goto,printsol
+;------------------------------------------------------------------------
+; Print errors
+;
+     7: begin
+	print,'          Individual Star Residuals'
+	print,'Star Flag     X(pix)     Y(pix)   xi res(") eta res(")'
+	for k=0,no_astro_ref_stars-1 do begin
+		print,f = "(1x,i5,i3,2f9.2,2x,2f8.2)",	$
+		k,astro_ref_flag(k),xpos(k), $
+                ypos(k),xi_res(k),eta_res(k)
+	endfor
+	print,' '
+;------------------------------------------------------------------------
+        end
+	8:  begin
+		read,'Enter star to be excluded: ',star_no
+		astro_ref_flag(star_no) = 0
+		weight(star_no) = 0.0
+	      end
+	  9: begin
+		read,'Enter star to be included: ',star_no
+		astro_ref_flag(star_no) = 1
+		weight(star_no) = 1.0
+	      end
+	 10:  begin
+		iterate = 'F'   
+		amd_flag = 'T'
+                varname = model_term(where(plate_model) )
+	        astro_x_coeffs = $
+                  regress(x_array,ref_xi,weight,xi_calc,xc,x_sigma,/REL)
+	        astro_y_coeffs = $
+                   regress(y_array,ref_eta,weight,eta_calc,yc,y_sigma,/REL)
+		x_coeff = dblarr(14)
+		y_coeff = dblarr(14)
+		m = 0
+		for k=0,13 do begin
+		if (plate_model(k) EQ 1) then begin
+		   x_coeff(k)=astro_x_coeffs(m)
+		   y_coeff(k)=astro_y_coeffs(m)
+                   comment = 'dl/d' + strtrim(model_term(k),2)
+                   sxaddpar,hdr,'CD001'+string(k+1,f='(i3.3)'), $
+                          x_coeff(k)/3600.,comment,'HISTORY'
+                   comment = 'dm/d' + strtrim(model_term(k),2)
+                   sxaddpar,hdr,'CD002'+string(k+1,f='(i3.3)'), $
+                          y_coeff(k)/3600.,comment,'HISTORY'
+		   m=m+1
+		endif
+		endfor
+		crval2 = crval2  + yc/3600./RADEG
+		crval1 = crval1 +  xc/cos(crval2)/3600./RADEG
+                sxaddpar,hdr,'CRVAL1',crval1*RADEG,'R.A at reference pixel'
+                sxaddpar,hdr,'CRVAL2',crval2*RADEG,'Dec at reference pixel'
+                sxaddpar,hdr,'CRPIX1',xcen+1,'X Reference Pixel'
+                sxaddpar,hdr,'CRPIX2',ycen+1,'Y Reference Pixel'
+	        win_dele,PlotWin
+                return
+                end
+        11:  begin
+  	     crval2 = crval2  + yc/RADEG/3600.
+	     crval1 = crval1 + xc/cos(crval2)/RADEG/3600.
+               goto,iterate
+             end
+	12:  begin
+	     astro_coeffs=0
+	     win_dele,PlotWin
+                 return
+	      end
+         else:
+endcase
+goto,menu
+;------------------------------------------------------------------------
+; Finished
+;
+return
+end

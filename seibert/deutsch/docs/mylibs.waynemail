@@ -1,0 +1,73 @@
+Hi Wayne!
+
+  I've finally finished tidying up my libraries, and FTPed them down
+to UIT.  They have been written on SPARC IDL, but should also work for
+VMS mostly.  Feel free to poke through and find anything you may want to
+include in the ASTRON or UIT libraries.  Or, also, would you like to add
+them in a contrib section?
+  Comments and suggestions welcome.  Below I've outlined some of the
+procedures you might find most interesting:
+
+UIT$USER0:[DEUTSCH]
+[.IMGROAM]
+
+astdisp    - This procedure has been updated a bit for use with IMGroam since
+             the last time I sent you this procedure.  It can replace what's
+             now in the UIT library.
+bscentrd   - I guess you folks all still use the CNTRD procedure (right?)
+             but I've been using this "Bad Stars" centroider for quite
+             some time.  It needs some work, which I hope to get to soon,
+             but in the mean time the centroiding part works well.
+gsc_read   - Reads GSC in formats that come from STScI or the format that
+             a certain VMS program put out when reading the CD-ROM.  I may
+             soon add the capability to read the table files that the
+             IRAF package writes when reading the CD-ROM.
+imgroam    - This is still the handy-dandy image roaming program I've been
+             writing since the early STScI days.  It has now been updated
+             for the new astrometry procedures.  It also still supports
+             GSSS astrometry.
+radprof    - A nifty little program which plots a radial profile of a star
+             and fits a gaussian to it.  It plots the fit and prints out
+             some nifty parameters.  This is called by IMGroam but also
+             stand-alone.
+starfit    - Fits a 2D gaussian to a star, returning exact center coordiantes
+             and FWHM.  It is essentially a centroider.  Has some robustness
+             problems with faint stars unfortunately.. a curvefit problem.
+xmessage   - A little Dialog Box program useful when widget programming.
+
+
+UIT$USER0:[DEUTSCH]
+[.IMG]
+
+conv_mail  - Convert VMS mail folders to unix mail folders
+dofind     - Useful for searching through DoPHOT output lists
+dostat     - Useful for a summary of DoPHOT output lists
+exist      - simple function which tests the existence of a file
+getstrip   - extracts a profile from an image given center X,Y, angle, length
+imgpaste   - paste a piece of an image into another
+imgread    - reads virtually any GEIS or SDAS/STDAS image incl. HST images
+objcenom   - Calculates the "center of flux" inside a given region of an
+             image.  Essentially a centroider, but for irregular shapes
+printpath  - prints the !PATH in a nice list
+psclose    - companion PostScript channel closer to 'setps'
+psout      - send an image to a Postscript file with formatting options
+setps      - open PostScript channel with sizing options
+skypos     - A nifty little program for ground-based observers.  Calculates
+             (and plots) zenith/airmass for an object during a given night
+             as well as moon position, etc.
+strdel     - little quickie program that deletes a part of a string
+which      - like the unix 'which' function.  Shows where all the locations
+             of a program of a given name is located in the !PATH
+whitesky   - inverse "white to black" gray scale
+yesno      - converts 0,1 to "No","Yes" and variations.
+
+
+"... and much, much more!"
+
+I think I've written headers for all of them, so there will be more info
+in the headers than what I've given above.  Please also let me know if there
+are duplicates of anything elsewhere in the public libraries; I find it
+hard to keep up with them all...
+
+cheers,
+Eric

@@ -1,0 +1,6 @@
+88d87
+< ;  update 2/17/2004 MHS - reduce half res images to jpg quality=75
+194c193
+<    write_jpeg,jname,img_med,true=1,quality=75
+---
+>    write_jpeg,jname,img_med,true=1,quality=100

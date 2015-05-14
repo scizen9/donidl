@@ -1,0 +1,951 @@
+%VERSION:2
+33
+308
+0:APOGETINST
+97:APOGUIDE
+3639:DISBOTH
+3749:DISCALC
+3859:DISCALSP
+3969:DISCALSP2
+4079:DISCALSPHR
+4189:DISFINDSPEC
+4299:DISHDRFIX
+4409:DISLIST
+4519:DISMKSPCAL
+4629:DISMKSPCAL2
+4739:DISMKSPCAL3
+4849:DISMKSPFLAT
+4959:DISREAD
+5069:DISSLIT
+5179:DISSPEC
+5289:GDRFLATEXAM
+5805:GDRMKCALS
+6509:GDRREAD
+8523:GRIMAPER
+9415:GRIMBADPIXMAP
+10213:GRIMCOMBINE
+10822:GRIMDARKCOMBINE
+11622:GRIMFLATCOMBINE
+12438:GRIMLIST
+13343:GRIMPROC
+13471:GRIMREAD
+15742:GRIMSUMMARY
+16667:GSSS_STDAST
+17938:MKFCHART
+20031:MROGUIDE
+22116:SPILIST
+;+
+ APO SOFTWARE
+
+ will read an instrument block to get details of the instrument and guider
+
+;-
+;+
+ NAME:
+	APOGUIDE
+
+ PURPOSE:
+	Generate a guide star acquisition map for the APO guider camera.
+	See the separate instruction sheet for complete instructions:
+	(http://www.astro.washington.edu/deutsch/apoinfo/guider/guideacq.txt)
+
+ CATEGORY:
+	APO software
+
+ CALLING SEQUENCE:
+	apoguide,instrument,coords [,dssfile=,gscfile=,/ps,objname=]
+
+ INPUTS:
+	instrument: A string specifying the desired primary instrument.
+		Current choices are: dis, grim, dsc
+
+	coords: A string containing the J2000 coordinates of the target
+		onject in sexigesimal format.
+
+ OPTIONAL INPUT KEYWORDS:
+	dssfile: The filename of a Digital Sky Survey (DSS) FITS image which
+		contains the field and the surrounding region.
+
+	gscfile: The filename of an HST Guide Star Catalog (GSC) extraction
+		which contains the target field and the surrounding region.
+		Note that since the limiting magnitude of the GSC is variable
+		around 14th magnitude, the GSC is almost necessary.
+
+	a10file: The filename of an USNO-A1.0 extraction
+		which contains the target field and the surrounding region.
+
+	ps:	If this keyword is set, the the output is directed to the
+		PostScript file 'gdracq.ps' instead of the screen.  Alternately
+		this keyword can be set to a string which is the filename.
+
+	objname: A string which will be printed out as an object name at the
+		top of a PostScript map.
+
+	suggest: If this keyword is set (default), a list of GSC stars in
+		the annulus is listed in brightness order.  If ps is
+		set, then the output is written to a file called suggest.dat
+
+	InstAng: Specify the desired Instrument Angle; the default is 0.
+
+ OUTPUTS:
+	None.
+
+ COMMON BLOCKS:
+	None.
+
+ SIDE EFFECTS:
+	None.
+
+ RESTRICTIONS:
+	None.
+
+ PROCEDURE:
+	Load DSS image if provided, rotate and display an appropriate region.
+	Load GSC list if provided, display star symbols.  Finally, overlay
+	the acquisition field map and labels.
+
+ EXAMPLE:
+	window,colors=50,xs=512
+	whitesky,res='RED'
+	coords='19 15 11.52  +10 56 45.1'
+	apoguide,'DIS',coords,dssfile='test08zr.fits',gscfile='test.gsclst'
+	 (see separate instruction sheet for complete details)
+
+ MODIFICATION HISTORY:
+	5/05/95 Written by E. Deutsch
+	5/20/95 Changed Guider Instrument offsets to 5/15/95 instrument
+	        block values.
+	7/11/95 Added default dsshdrfile variable.  E. Deutsch
+	9/13/95 Improved background level determination.  E. Deutsch
+	10/11/95 Made major changes to the logic.  Now uses actual
+		Instrument Blocks as input.  New verified with
+		actual observations.  E. Deutsch
+	10/20/95 Added coordinate grid labels.  E. Deutsch
+	10/25/95 Fixed some rouning errors in thr coordinate grid labels,
+		and added rotator angle numbers for GRIM.  Also modified the
+		image stretch algoritm back to imscl().  E. Deutsch
+	11/20/95 Removed bad column graphic for SS512.  E. Deutsch
+	04/17/96 Updated labels or other various things to conform to the
+		new convention of rotator angle.  E. Deutsch
+	05/05/96 Tidied up some of the angles stuff after updating the
+		inst blocks.  Also added the /----X graphics, although
+		I kind of doubt that they're right.  E. Deutsch
+	09/24/96 Added code to support SPICAM.  E. Deutsch
+	09/24/96 Added code for the X,Y orientation of the cameras.  E. Deutsch
+	10/25/96 Changed the behavior of GC_GIm_ang to something a little
+		more correct, although it is far from understood.  E. Deutsch
+	10/25/96 Made lots of other transformation changes.  I think it
+		is more correct than it was, but there are still problems.  E. Deutsch
+	12/31/96 Added support of the USNO-A1.0 catalog.  E. Deutsch
+
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-
+;+
+ NAME:
+	GDRFLATEXAM
+
+ PURPOSE:
+	Examine the files FLAT[1-9].
+
+ CATEGORY:
+	APO software
+
+ CALLING SEQUENCE:
+	gdrflatexam
+	gdrflatexam,[size=]
+
+ INPUTS:
+	none
+
+ OPTIONAL INPUT KEYWORDS:
+	size:	If the images are not 512x512 (the default 1x1 bin of the
+		512^2 chip), then you must specify the size of the image
+		with this keyword.
+
+ OUTPUTS:
+	None
+
+ COMMON BLOCKS:
+	None.
+
+ SIDE EFFECTS:
+	None.
+
+ RESTRICTIONS:
+	None.
+
+ PROCEDURE:
+	
+
+ EXAMPLE:
+	gdrmkcals
+
+ MODIFICATION HISTORY:
+	12/18/95 Written by E. Deutsch
+
+;-
+;+
+ NAME:
+	GDRMKCALS
+
+ PURPOSE:
+	Generate guider calibration frames Zero and Dark from files
+	zero[1-7] and dark[1-7].
+
+ CATEGORY:
+	APO software
+
+ CALLING SEQUENCE:
+	gdrmkcals
+	gdrmkcals,[size=]
+
+ INPUTS:
+	none
+
+ OPTIONAL INPUT KEYWORDS:
+	size:	If the images are not 512x512 (the default 1x1 bin of the
+		512^2 chip), then you must specify the size of the image
+		with this keyword.
+
+ OUTPUTS:
+	files Zero.hhh & .hhd  and  Dark.hhh & .hhd
+
+ COMMON BLOCKS:
+	None.
+
+ SIDE EFFECTS:
+	None.
+
+ RESTRICTIONS:
+	None.
+
+ PROCEDURE:
+	Source images are loaded and combined.
+
+ EXAMPLE:
+	gdrmkcals
+
+ MODIFICATION HISTORY:
+	09/22/95 Written by E. Deutsch
+	11/20/95 Modified for 512x512 camera default by E. Deutsch
+
+;-
+;+
+ NAME:
+	GRDREAD
+
+ PURPOSE:
+	Read an image from the APO Guider instrument into IDL variables.
+	By default, 512x512 images are expected (1x1 binning on the 512^2
+	camera, but this can be changed with the size= keyword.
+
+ CATEGORY:
+	APO software
+
+ CALLING SEQUENCE:
+	gdrread,image,header,filename
+	gdrread,image,header,filename [,/fixpix,bias=,dark=,flat=,/orien,
+		/disp,/macfix,size=]
+
+ INPUTS:
+	filename: A string containing the name of the image to be read. 
+		The image must be in the guider software native format
+		(which is just a binary dump).
+
+ OPTIONAL INPUT KEYWORDS:
+	fixpix:	If set, bad columns on the old SS 1024^2 chip are fixed.
+
+	bias:	If set, an archival bias frame is subtracted.
+
+	dark:	If set, an archival dark frame is subtracted.
+
+	flat:	If set, an archival flat field is applied.
+
+	disrot:	If set, the field is flipped and rotated so that North is
+		up and East is left when the instang=0 if DIS is main inst.
+
+	dscrot:	If set, the field is flipped and rotated so that North is
+		up and East is left when the instang=0 if DSC is main inst.
+
+	disp:	If set, the image is displayed after it is read.
+
+	macfix: If set, the Macintosh binary header is stripped from the
+		file (this is useful if the file was transferred in
+		"MacBinary" mode, although this should be avoided).
+
+	size:	If the image is not 512x512 (the default 1x1 bin of the
+		512^2 chip), then you must specify the size of the image
+		with this keyword.
+
+ OUTPUTS:
+	image:	variable into which 2D Guider image array will be stored.
+
+	header:	variable into which Guider image header will be stored.
+
+ COMMON BLOCKS:
+	None.
+
+ SIDE EFFECTS:
+	None.
+
+ RESTRICTIONS:
+	None.
+
+ PROCEDURE:
+	Guider image is read into memory, and then any appropriate steps
+	specified by the keywords are performed.
+
+ EXAMPLE:
+	window,colors=50
+	whitesky,res='RED'
+	gdrread,img,h,'ewd01',size=512,/disp
+	imgroam,img,h
+
+ MODIFICATION HISTORY:
+	05/14/95 Written by Eric W. Deutsch
+	12/18/95 Updated to have 512^2 camera as default adn tidied a bit. EWD
+
+;-
+;+
+ NAME:
+	GRIMAPER
+
+ PURPOSE:
+	Quick aperture photometry wrapper for an image from the APO GRIM II.
+
+ CATEGORY:
+	APO software
+
+ CALLING SEQUENCE:
+	grimaper,image,header,xcenter,ycenter,radii
+
+ INPUTS:
+	image:	2D GRIM image array, usually read with GRIMREAD.
+
+	header:	Header array, usually read with GRIMREAD.
+
+	xcenter: X position of the center of the aperture.
+
+	ycenter: Y position of the center of the aperture.
+
+	radii:	array of aperture radii.
+
+ OPTIONAL INPUT KEYWORDS:
+	None.
+
+ OUTPUTS:
+	Printed aperture information.
+
+ COMMON BLOCKS:
+	None.
+
+ SIDE EFFECTS:
+	None.
+
+ RESTRICTIONS:
+	AStronomy library routine APER required.
+
+ PROCEDURE:
+	Astronomy User's Library APER routine is called with appropriate
+	parameters.
+
+ EXAMPLE:
+	grimread,img,h,'/host/dione/u3/deutsch/grim/sample/n1.0004',/flagdef
+	grimaper,img,h,125,92,[5,7,9]
+
+ MODIFICATION HISTORY:
+	1995 Written by E. Deutsch
+
+;-
+;+
+ NAME:
+	GRIMBADPIXMAP
+
+ PURPOSE:
+	Combine a set of dark frames.
+
+ CATEGORY:
+	APO software
+
+ CALLING SEQUENCE:
+	grimbadpixmap,searchspec
+	grimbadpixmap,searchspec,[outputfilename]
+
+ INPUTS:
+	searchspec: A string containing the search specification for the
+		images to be used.  This is typically '*.hhh'
+
+ OPTIONAL INPUTS:
+	outputfilename: A string containing the name of an output file
+		which will contain the bad pixel map.  If this
+		paramenter is not supplied, the name will be 'badpix'
+
+ OPTIONAL INPUT KEYWORDS:
+	None.
+
+ OUTPUTS:
+	None.
+
+ COMMON BLOCKS:
+	None.
+
+ SIDE EFFECTS:
+	None.
+
+ RESTRICTIONS:
+	None.
+
+ PROCEDURE:
+	A list of images is assembled, and then the images are average combined.
+
+ EXAMPLE:
+	grimbadpixmap,'dome/*.hhh'
+
+ MODIFICATION HISTORY:
+	1995 Written by E. Deutsch
+
+;-
+;+
+
+ this is a quick hack main program to shift and combine a set of GRIM
+ images using a bad pixel map.  This works really well, but the program
+ needs a lot of work.  I don't have any GRIM data exciting enough to
+ put time into this at the moment.
+
+ "needs work"
+
+ good idea:
+ 1) run it through this program once
+ 2) create a star mask from the final image.
+ 3) Then, run it through again masking not just bad pixels, but also the
+    stars to generate a better flat field.
+ 4) Then run it through one final time with the better flat field.
+  someday I'll write a program which will do all this... sigh.
+;-
+;+
+ NAME:
+	GRIMDARKCOMBINE
+
+ PURPOSE:
+	Combine a set of dark frames.
+
+ CATEGORY:
+	APO software
+
+ CALLING SEQUENCE:
+	grimdarkcombine,searchspec
+	grimlist,searchspec [,outputfilename]
+
+ INPUTS:
+	searchspec: A string containing the search specification for the
+		images to be combined.  This is typically '*.hhh'
+
+ OPTIONAL INPUTS:
+	outputfilename: A string containing the name of an output file
+		which will contain the final dark.  If this
+		paramenter is not supplied, the name will be 'Dark'
+
+ OPTIONAL INPUT KEYWORDS:
+	None.
+
+ OUTPUTS:
+	None.
+
+ COMMON BLOCKS:
+	None.
+
+ SIDE EFFECTS:
+	None.
+
+ RESTRICTIONS:
+	None.
+
+ PROCEDURE:
+	A list of images is assembled, and then the images are average combined.
+
+ EXAMPLE:
+	grimdarkcombine,'darks/*.hhh'
+
+ MODIFICATION HISTORY:
+	1995 Written by E. Deutsch
+
+;-
+;+
+ NAME:
+	GRIMFLATCOMBINE
+
+ PURPOSE:
+	Combine a set of image frames to make a flat.
+
+ CATEGORY:
+	APO software
+
+ CALLING SEQUENCE:
+	grimflatcombine,searchspec
+	grimlist,searchspec [,outputfilename]
+
+ INPUTS:
+	searchspec: A string containing the search specification for the
+		images to be combined.  This is typically '*.hhh'
+
+ OPTIONAL INPUTS:
+	outputfilename: A string containing the name of an output file
+		which will contain the final flat.  If this
+		paramenter is not supplied, the name will be 'Flat'
+
+ OPTIONAL INPUT KEYWORDS:
+	None.
+
+ OUTPUTS:
+	None.
+
+ COMMON BLOCKS:
+	None.
+
+ SIDE EFFECTS:
+	None.
+
+ RESTRICTIONS:
+	None.
+
+ PROCEDURE:
+	A list of images is assembled, and then the images are median combined.
+
+ EXAMPLE:
+	grimflatcombine,'flat10/*.hhh'
+
+ MODIFICATION HISTORY:
+	1998 Written by E. Deutsch
+
+;-
+;+
+ NAME:
+	GRIMLIST
+
+ PURPOSE:
+	Generate a listing of GRIM images with interesting information in
+	various columns.
+
+ CATEGORY:
+	APO software
+
+ CALLING SEQUENCE:
+	grimlist,searchspec
+	grimlist,searchspec [,outputfilename]
+
+ INPUTS:
+	searchspec: A string containing the search specification for the
+		images to be listed.  This is typically '*.hhh'
+
+ OPTIONAL INPUTS:
+	outputfilename: A string containing the name of an output file
+		which will contain the listing of images.  If this
+		paramenter is not supplied, the name will be 'listhdrs.out'
+
+ OPTIONAL INPUT KEYWORDS:
+	None.
+
+ OUTPUTS:
+	None.
+
+ COMMON BLOCKS:
+	None.
+
+ SIDE EFFECTS:
+	None.
+
+ RESTRICTIONS:
+	None.
+
+ PROCEDURE:
+	A list of images is assembled, and then each header is read and a
+	list of interesting information about each image is written to a list.
+
+ EXAMPLE:
+	grimlist,'*.hhh'
+
+ MODIFICATION HISTORY:
+	1995 Written by E. Deutsch
+
+;-
+;+
+
+ this is a quick hack main program to dark-sub and flat and set up a shifts
+ file to run grimcombine.pro.
+
+ "needs work"
+;-
+;+
+ NAME:
+	GRIMREAD
+
+ PURPOSE:
+	Read an image from the APO GRIM II instrument into IDL variables.
+	By default, the image is dark-subtracted, flat-fielded, and flipped
+	and rotated so that North is up and East is left when the instrument
+	angle is 0.
+
+ CATEGORY:
+	APO software
+
+ CALLING SEQUENCE:
+	grimread,image,header,filename
+	grimread,image,header,filename [,/noproc,/noflat,/levfit,/flagdefects,
+		darkfile=,flatfile=,/disp,/norot]
+
+ INPUTS:
+	filename: A string containing the name of the image to be read. 
+		The image may be a GEIS file (.hhh & .hhd), an OIF file
+		(.imh & .pix) or a FITS file (.fit or .fits).  If no
+		no file extention is specified, .hhh is assumed.
+
+ OPTIONAL INPUT KEYWORDS:
+	noproc:	If set, no processing or rotating is done to the image.
+
+	noproc:	If set, a flat-field is not applied to the image.
+
+	levfit:	There are often differences in bias levels (and even a
+		curved level) between the four quadrants.  Set this
+		keyword to attempt to fit and remove this level differences.
+
+	flatdefects: Flag the bad pixels as determined by a bad pixel file.
+		All bad pixels are given the value 65535.0
+
+	darkfile: A string containing the filename of a dark file to be
+		subtracted from the image instead of the default dark.
+
+	flatfile: A string containing the filename of a flat-field file to be
+		divided into the image instead of the default flat.
+
+	disp: If set, the image is also displayed.
+
+	norot: If set, the image is is NOT rotated 180 degrees.
+
+ OUTPUTS:
+	image:	variable into which 2D GRIM image array will be stored.
+
+	header:	variable into which GRIM image header will be stored.
+
+ COMMON BLOCKS:
+	None.
+
+ SIDE EFFECTS:
+	Approximate image stretching parameters are stored in the header.
+
+ RESTRICTIONS:
+	None.
+
+ PROCEDURE:
+	GEIS image is read into memory, and then a dark is subtracted, the
+	image is flat-fielded with archival calibration images.  If desired,
+	bias levels are fit and corrected, and bad pixels are flagged to
+	65535.0.  Finally the image is flipped and rotated, and approximate
+	stretching parameters are stored in the header.
+
+ EXAMPLE:
+	window,colors=50
+	whitesky,res='RED'
+	grimread,img,h,'/host/dione/u3/deutsch/grim/sample/n1.0004',/flagdef
+	imgroam,img,h
+
+ MODIFICATION HISTORY:
+	1995 Written by E. Deutsch
+
+;-
+;+
+ NAME:
+	GRIMSUMMARY
+
+ PURPOSE:
+	Generate a summary of GRIM images with interesting information in
+	various columns.
+
+ CATEGORY:
+	APO software
+
+ CALLING SEQUENCE:
+	grimsummary,searchspec
+	grimsummary,searchspec [,outputfilename]
+
+ INPUTS:
+	searchspec: A string containing the search specification for the
+		images to be listed.  This is typically '*.hhh'
+
+ OPTIONAL INPUTS:
+	outputfilename: A string containing the name of an output file
+		which will contain the listing of images.  If this
+		paramenter is not supplied, the name will be 'listhdrs.out'
+
+ OPTIONAL INPUT KEYWORDS:
+	None.
+
+ OUTPUTS:
+	None.
+
+ COMMON BLOCKS:
+	None.
+
+ SIDE EFFECTS:
+	None.
+
+ RESTRICTIONS:
+	None.
+
+ PROCEDURE:
+	A list of images is assembled, and then each header is read and a
+	list of interesting information about each image is written to a list.
+
+ EXAMPLE:
+	grimsummary,'*.hhh'
+
+ MODIFICATION HISTORY:
+	1997-MAR-19  Written by E. Deutsch
+
+;-
+;+
+ NAME:
+	GSSS_STDAST
+ DESCRIPTION:
+	This procedure takes a header with GSSS (ST Guide Star Survey) 
+	astrometry and writes a roughly equivalent tangent projection 
+	astrometry into the header. 
+
+ CALLING SEQUENCE:
+	GSSS_STDAST, H
+
+ INPUT - OUTPUT:
+	H -  FITS header (string array) containing GSSS astrometry.  
+	GSSS_STDAST will write the roughly equivalent tangent projection 
+		astrometry solution into H.
+
+ METHOD:
+ 	The procedures GSSSXYAD is used to exactly determine the RA and Dec
+	at 3 reference points.    STARAST is then used to find the tangent
+	projection astrometry that best matches these reference points.
+
+ NOTES:
+	Some early GSSS images (before the 1994 CD-Rom) used keywords CRPIXx
+	rather than CNPIXx.    The GSSS astrometry in these images could be
+	corrupted by this procedure as the CRPIXx values will be altered.
+
+	The tangent is only a approximation of the nonlinear GSSS astrometry,
+	but is generally accurate to about 0.1 pixels on a 1024 x 1024 image.
+
+ PROCEDURES USED:
+	GSSSEXTAST, GSSSXYAD, STARAST, PUTAST, SXADDHIST, SXDELPAR
+
+ HISTORY:
+	13-AUG-91 Version 2 written from MAKEASTGSSS  Eric Deutsch (STScI)
+	Delete CDELT* keywords from header   W. Landsman      May 1994
+	Remove call to BUILDAST  W. Landsman                  Jan, 1995
+;-
+;+
+ NAME:
+	MKFCHART
+
+ PURPOSE:
+	Generate a simple finding chart, given an input of the Digitized
+	Sky Survey (DSS) or the Guide Star Catalog (GSC).
+
+ CATEGORY:
+	APO software
+
+ CALLING SEQUENCE:
+	mkfchart,coords [,dssfile=,gscfile=,/ps,objname=,fieldsize=]
+
+ INPUTS:
+	coords: A string containing the J2000 coordinates of the target
+		object in sexigesimal format.
+
+ OPTIONAL INPUT KEYWORDS:
+	dssfile: The filename of a Digitized Sky Survey (DSS) FITS image which
+		contains the field and the surrounding region.
+
+	gscfile: The filename of an HST Guide Star Catalog (GSC) extraction
+		which contains the target field and the surrounding region.
+		Note that since the limiting magnitude of the GSC is variable
+		around 14th magnitude, the GSC is almost necessary.
+
+	a10file: The filename of an USNO-A1.0 extraction
+		which contains the target field and the surrounding region.
+
+	ps:	If this keyword is set, the the output is directed to the
+		PostScript file 'gdracq.ps' instead of the screen.  Alternately
+		this keyword can be set to a string which is the filename.
+
+	objname: A string which will be printed out as an object name at the
+		top of a PostScript map.
+
+	fieldsize: This keyword can specify a fieldsize other than some
+		default value (DSS image size or 10 arcmin).
+
+	polygon: Overlay a polygon with verticies [ra0,dec0,ra1,dec1,ra2,dec2,...]
+		The polygon is not close automatically.
+
+	interactive: Interactively draw SPIcam fields on the image.
+
+	spifields: Overplot the SPIcam fields.
+
+ OUTPUTS:
+	Screen image or postscript file.
+
+ COMMON BLOCKS:
+	None.
+
+ SIDE EFFECTS:
+	None.
+
+ RESTRICTIONS:
+	None.
+
+ PROCEDURE:
+	Load DSS image if provided, rotate and display an appropriate region.
+	Load GSC list if provided, display star symbols.  Finally, overlay
+	a cross at the coordinates and labels.
+
+ EXAMPLE:
+	window,colors=50,xs=512
+	whitesky,res='RED'
+	coords='19 15 11.52  +10 56 45.1'
+	apoguide,coords,dssfile='test08zr.fits',gscfile='test.gsclst'
+	 (see separate instruction sheet for complete details)
+
+ MODIFICATION HISTORY:
+	11/16/96 Written by E. Deutsch based on APOGUIDE
+
+;-
+;+
+ NAME:
+	MROGUIDE
+
+ PURPOSE:
+	Generate a guide star acquisition map for the MRO guider camera.
+	See the separate instruction sheet for complete instructions:
+	(http://www.astro.washington.edu/deutsch/apoinfo/guider/guideacq.txt)
+
+ CATEGORY:
+	MRO software
+
+ CALLING SEQUENCE:
+	mroguide,instrument,coords [,dssfile=,gscfile=,/ps,objname=]
+
+ INPUTS:
+	instrument: A string specifying the desired primary instrument.
+		Current choices are: MRO
+
+	coords: A string containing the J2000 coordinates of the target
+		onject in sexigesimal format.
+
+ OPTIONAL INPUT KEYWORDS:
+	dssfile: The filename of a Digital Sky Survey (DSS) FITS image which
+		contains the field and the surrounding region.
+
+	gscfile: The filename of an HST Guide Star Catalog (GSC) extraction
+		which contains the target field and the surrounding region.
+		Note that since the limiting magnitude of the GSC is variable
+		around 14th magnitude, the GSC is not really necessary.
+
+	ps:	If this keyword is set, the the output is directed to the
+		PostScript file 'gdracq.ps' instead of the screen.  Alternately
+		this keyword can be set to a string which is the filename.
+
+	objname: A string which will be printed out as an object name at the
+		top of a PostScript map.
+
+	suggest: If this keyword is set (default), a list of GSC stars in
+		the annulus is listed in brightness order.
+
+	InstAng: Specify the desired Instrument Angle; the default is 0.
+
+ OUTPUTS:
+	None.
+
+ COMMON BLOCKS:
+	None.
+
+ SIDE EFFECTS:
+	None.
+
+ RESTRICTIONS:
+	None.
+
+ PROCEDURE:
+	Load DSS image if provided, rotate and display an appropriate region.
+	Load GSC list if provided, display star symbols.  Finally, overlay
+	the acquisition field map and labels.
+
+ EXAMPLE:
+	window,colors=50,xs=512
+	whitesky,res='RED'
+	coords='19 15 11.52  +10 56 45.1'
+	mroguide,'tbird',coords,dssfile='test08zr.fits',gscfile='test.gsclst'
+	 (see separate instruction sheet for complete details)
+
+ MODIFICATION HISTORY:
+	5/05/95 Written by E. Deutsch
+	9/13/95 Improved background level determination.  E. Deutsch
+	9/20/96 Updated to be similar to apoguide.pro.  E. Deutsch
+;-
+;+
+ No formal header yet.  See the documentation in
+   http//www.astro.washington.edu/deutsch/apoinfo.html
+;-

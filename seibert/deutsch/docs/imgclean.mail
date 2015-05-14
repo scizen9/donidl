@@ -1,0 +1,41 @@
+  IDL v2 Software for removing Cosmic Ray hits, specifically designed for WFPC
+CCD images.
+
+  NOTE:  There has been a change to the calling sequence!!  Now the FITS
+header may be passed.  The header is updated with the values of the settings
+as well as the final number of pixels removed and left alone.  The HEADER
+parameter has been placed ahead of the returned flag/log image to preserve
+a similar calling sequence as other IMG____ procedures.  The older version
+of IMGclean may still be accessed with IMGclean122.
+
+(On the STFOSC cluster)
+
+$ @DISK$USER3:[DEUTSCH.IMG]IMG.COM
+$ IDL
+> IMGread,im,h,'filename'
+> IMGclean,im,h,cr
+
+Notes:
+-IMGread is just my image reading routine; one can use SXREAD, etc.
+-Type     > IMGclean            for the calling sequence
+-Type     > IMGclean,/help      for a more detailed listing of keywords
+-The IMG.COM is just as follows:
+  $ @SYS$LOCAL:[MOUSSE_V2.IDLCOM]MOUSSE
+  $ DEFINE IDL_PATH -
+      "DISK$USER3:[DEUTSCH.IMG]",-
+      "DISK$DATA5:[DEUTSCH.MOUSSE.PRO]",-
+      "@IDL_DIR:[LIB]USERLIB.TLB",-
+      "IDL_DIR:[LIB]"
+-The [DEUTSCH.IMG] directory contains the IMGclean software (and subroutines.)
+-The [DEUTSCH.MOUSSE.PRO] directory is the latest MOUSSE library.
+
+Finally, if you know of other people trying to use this software, please ask 
+them to write me so that I may keep them posted of any changes.
+
+Report any problems to SCIVAX::DEUTSCH.
+
+Cheers,
+ Eric
+
+distr: BOHLIN,EVANS,DEUTSCH,SCIVAX::WEAVER,COBLE,
+       IN%"rwo@perseus.astro.Virginia.EDU"  "Robert W. O'Connell"

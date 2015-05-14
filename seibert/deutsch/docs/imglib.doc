@@ -1,0 +1,119 @@
+                        DEUTSCH (IMG) Library for IDL
+                         Available via Anonymous FTP
+                          Eric W. Deutsch  04/15/93
+
+Node: orca.astro.washington.edu
+Dir: /pub/idl/deutsch
+
+  The DEUTSCH IMG library contains a collection of procedures useful for
+astronomical work under the IDL Programming Language. There are several
+"general purpose" routines that others not working in astronomy may also
+find useful.  However, most procecedures call other procedures in the
+Astronomy Library (from WBL @ GSFC).
+
+  A brief discussion of what you will find in this library can be found in
+this file.  Installation instructions can be found in the INSTALL
+test file.  The library ought to be equally operation on both VMS and
+Unix platforms, but since the library is currently being developed on a
+Unix SunOS OpenLook system, small (fixable) problems may crop up on other
+platforms; please report them.
+
+If you find some of these procedures useful, I would be delighted to hear
+from you via Email. You may send questions, comments, and suggestions to
+deutsch@janus.astro.washington.edu.  If you make improvements to existing
+code, please Email along the changes.  The current organization of the library
+is somewhat half-done, but I won't get around to organizing things for a while.
+In the mean time some procedures here may be of use to other.  Note that
+changes are likely to be frequent.  If you would like to receive notices
+of important changes, send me Email and I will add your address to the
+distribution.
+
+
+  The following text describes the main procedures of interest in the library,
+but is not the complete description.  Use the "?" facility with the supplied
+deutsch.help file to read all the headers.
+
+1) PostScript Formatting routines:  SETPS, PSCLOSE, PSOUT
+   These 3 procedures provide good support for quickly sending plots and
+   images to PostScript printers.  Works under both VMS and Unix (SunOS at
+   least).  Output of a single landscape plot is as easy as:
+     IDL> setps,/land & plot,indgen(100) & psclose,/auto
+   Default landscape sizes are used.  Custom ones can be specified.
+   Support of multiple printers and selecting from lists is built in, but
+   requires a little setup.
+   The PSOUT procedure determines best sizes and offsets for any size image.
+
+2) Cosmic Ray Removal Software:  IMGCLEAN, CLEANEXAMINE
+   This software is very useful for removing cosmic ray hits from images for
+   which there is NO CR split possible.  The algorithm relies on identification
+   alone and no comparison of 2 images.  Currently tweaked for HST PC images,
+   and ought to work with most images with undersampled PSFs with a little
+   experimenting with parameters.  CLEANEXAMINE is a facility for patching
+   up the final cleaned image.  It allows you to remove cosmic rays that
+   IMGCLEAN missed and repair the occaisional obliterated star.
+   IMGclean is not the greatest, but is worth looking into if you have PC
+   images that need cleaning or are searching for CR removal code.  Comments
+   welcome.
+
+3) Image Reading Software:  IMGREAD
+   IMGREAD can read read virtually all GEIS (i.e. .hhh & .hhd) images
+   including SDAS and STSDAS multigroup files.  If you need to read WF/PC
+   images and all other sorts of GEIS images (except some NAXIS = 3 images)
+   this is useful.  Reads WF/PC images easily.
+
+4) Interactive Image Display: IMGROAM
+   IMGROAM is a mouse (Widget) driven interactive image "roaming" software
+   package.  A small window with the compressed image is displayed with a small
+   square indicating where the 512x512 Frame Window is viewing.  Zoom and
+   Stretch are easily adjusted.  X,Y,RA,DEC,DN Values are continuously updated
+   as the cursor tracks across the image.  Easily handles images as large as
+   2048x2048.  Includes centroiding and useful Astrometry creation support.
+   Supports HST GSSS image Astronometry.  Very useful for creating an
+   Astrometric solution for a CCD from a GSSS extraction.  Some primitive
+   support for allowing users to add their own "key activated" functions
+   (example for pressing C to remove Cosmic Ray at current cursor location
+   included.)
+   NOTE:  IMGroam prefers to have an astromical image header supplied, but
+   is also useful for examining arrays like:
+     IDL> a=indgen(512,512)
+     IDL> imgroam,a
+
+
+One Line Procedure descriptions:
+
+ARROWS       - Draw North/East arrows figure on an image given CD matrix (GSFC)
+ASTDISP      - Standardized procedure to write X,Y,RA,DEC,DN on line
+ASTRMFIX     - Calculate approximate CD matrix from HST roll angle
+BLACKSKY     - Load a standard black to white linear color table
+BSCENTRD     - Centroider optimized for "Bad Stars" that CNTRD can't do
+CALC_A       - Quick front end to UNRED to calculate extinctions
+CLEANEXAMINE - Program which helps compare/edit 2 similar (before/after) images
+CONV_STSDAS  - Convert a GEIS/STSDAS image to/from VMS and Unix formats
+DEFANSI      - Define a bunch of useful ANSI control sequences in a COMMON
+DISPBAR      - Display a color bar according to supplied parameters
+DOSTAT       - Return output objects summary from DoPHOT (COMPLETE) output
+EXIST        - Function which returns 1 if the passed file exists
+EXTGRP       - Extract all group parameters in a STSDAS file into keywords
+GETDEFVAL    - Standardized way of retrieving info from a defaults file
+GETSTRIP     - extract a profile from an image given center, angle, and length
+GSC_READ     - Read an HST GSC file as written from GASP Database search
+IMGCLEAN     - identify and remove cosmic rays from a single HST PC image
+IMGPASTE     - Paste a portion of one image into another
+IMGREAD      - Read into memory virtually any GEIS/SDAS/STSDAS file
+IMGROAM      - Interactive mouse-driven image roaming facility
+                 (many slave procedures not listed here)
+IMGTEXT      - Write large friendly letters to the screen (large bitmap fonts)
+IRSFLOAD     - Load a list of stars written in the IMGROAM Star File format
+IRSFSAVE     - Save a list of stars in the IMGROAM Star File format
+PSCLOSE      - Close PostScript output with automatic printing options
+PSOUT        - Dump out an image (or graphics window) to a PostScript file
+SETPS        - Open Postscript stream with several sizing/positions options
+STRDEL       - Remove a section of a string
+WFPCMRG      - Assemble a crude mosaic of a HST WF/PC image (trim but no rotn)
+WFPCREAD     - Read multigroup STSDAS file (usually called from IMGREAD)
+WHITESKY     - Load a stadard white to black linear color table
+YESNO        - Function that returns "Yes" or "No" type strings given 1 or 0
+ and other miscellaneous stuff
+
+
+

@@ -1,0 +1,13 @@
+These files contain fluxes for Vega in f_lambda
+units.  The wavelengths are usually in Angstroms,
+but not always.
+
+AOV_KUR_BB.SED is a mystery.
+alpha_lyr_stis_002.fits is the STIS spectrum
+ from Bohlin & Gilliland, 2004, AJ, 127, 3508
+alpha_lyr_stis_003.fits is an update to the STIS spectrum.
+vega_c95.dat is (probably) Castelli & Kurucz, 1994, A&A 281, 817
+vega_Hayes85.dat is from Hayes 85, IAUS 111, 255 normalized
+ using his value of f_lambda = 4.65e-9 erg/cm^2/sec/A at 5000 A
+vega_k93.dat is Kurucz 1993 models for an A0V star
+vega_kim.dat is a mystery (and the wavelengths are in nm)

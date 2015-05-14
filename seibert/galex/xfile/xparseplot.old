@@ -1,0 +1,334 @@
+pro xparseplot, xparsefile, binsize=binsize,$ 
+                adaptivebin=adaptivebin,snr=snr,ps=ps,$
+                outpath=outpath, nlc=nlc, title=title,$
+                timerange=timerange
+
+; read outpout from xfileparse and plot
+;
+; xparsefile = name of sav file from xfileparse
+;     contains: 
+;     t,ra,dec -> arrays from extended photon file 
+;     ra0,dec0 -> position of source
+;     rr -> relative repsonse at ra0,dec0
+;     diam -> diameter of circular aperture
+;     expstart,expend,exptime -> from rr header converted to s/c time
+;     obsdate -> string from rr header
+;     field -> tilename+visit
+;     clock_time ->  s/c time intervals of 0.1 seconds over exposure
+;     clock -> clock=1 if any (not just source) photons exist in interval
+;              clock=0 otherwise
+;
+; binsize = fixed bin size in seconds (defaults to 60s)
+; adaptivebin = use adaptive binning (based upon counting snr)
+;               if selected binsize is ignored
+; snr = snr to use if adaptive binning is set
+; ps = output to postscript if set (defaults to screen)
+; outpath = output dir path
+
+if not keyword_set(outpath) then outpath='.'
+outpath=outpath+'/'
+
+nlcflag=''
+if keyword_set(nlc) then nlcflag='-nlc'
+
+;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;
+;read sav file and set up
+
+
+ext=strpos(xparsefile,'.sav')
+file=strmid(xparsefile,0,ext)
+
+if not keyword_set(binsize) then binsize=60
+
+restore, xparsefile
+
+if keyword_set(timerange) then begin
+;select time range 
+ a=where(t-expstart ge timerange[0] and $
+         t-expstart le timerange[1], tcount)
+ if tcount gt 1 then begin
+  ra=ra[a]
+  dec=dec[a]
+  t=t[a]
+ endif
+
+endif
+
+n=strpos(xparsefile,'-nd-')
+f=strpos(xparsefile,'-fd-')
+if n[0] ge 0 then band='n'
+if f[0] ge 0 then band='f'
+if band eq 'f' then zp=18.82
+if band eq 'n' then zp=20.08
+
+clockinterval=0.1 ; fixed in xfileparse
+
+
+;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;
+;fixed time intervals
+
+if not keyword_set(adaptivebin) then begin
+
+psfile=outpath+file+nlcflag+'-fixed'+strcompress(string(binsize),/rem)+'.ps'
+datfile=outpath+file+nlcflag+'-fixed'+strcompress(string(binsize),/rem)+'.dat'
+
+interval=binsize
+bins=ceil((expend-expstart)/interval)
+time=fltarr(bins)
+photons=fltarr(bins)
+mag=fltarr(bins)
+magerr=fltarr(bins)
+avgra=fltarr(bins)
+avgdec=fltarr(bins)
+sdra=fltarr(bins)
+sddec=fltarr(bins)
+
+for i=0,bins-1 do begin
+
+ time[i]=(i+1)*interval
+ mag[i]=!values.f_nan
+ magerr[i]=!values.f_nan
+ avgra[i]=!values.f_nan
+ sdra[i]=!values.f_nan
+ avgdec[i]=!values.f_nan
+ sddec[i]=!values.f_nan
+
+ a=where(t ge expstart+interval*i and t lt expstart+interval*(i+1),count)
+ if count gt 0 then begin
+  photons[i]=count
+  aa=where(clock_time ge expstart+interval*i and $
+           clock_time lt expstart+interval*(i+1) and $
+           clock gt 0, bcount)
+  fracdt=bcount*clockinterval
+  rrfrac=rr*fracdt/exptime
+  ;rrfrac=rr*interval/exptime
+  mag[i]=-2.5*alog10(photons[i]/rrfrac)+zp
+  magerr[i]= (2.5/alog(10)) * (sqrt(photons[i])/rrfrac)/(photons[i]/rrfrac)
+  if count gt 1 then begin
+      m=moment(ra[a],/nan)
+      avgra[i]=m[0]
+      sdra[i]=sqrt(m[1])
+      m=moment(dec[a],/nan)
+      avgdec[i]=m[0]
+      sddec[i]=sqrt(m[1])
+   endif
+ endif
+
+endfor 
+
+endif 
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;
+;adaptive time intervals
+
+if keyword_set(adaptivebin) then begin
+if not keyword_set(snr) then snr=5
+
+psfile=outpath+file+nlcflag+'-adapt'+strcompress(string(snr),/rem)+'.ps'
+datfile=outpath+file+nlcflag+'-adapt'+strcompress(string(snr),/rem)+'.dat'
+
+dt=clockinterval
+tt=dt
+delvarx, photons,time,mag,magerr
+
+while tt lt exptime>(max(t)-expstart) do begin
+ m=!values.f_nan
+ me=!values.f_nan
+ a=where(t ge expstart+tt-dt and t lt expstart+tt,count) 
+ if count gt 0 and  count/sqrt(count) gt snr then begin
+  aa=where(clock_time ge expstart+tt-dt and $
+           clock_time lt expstart+tt and $
+           clock gt 0, bcount)
+  fracdt=bcount*clockinterval
+  ;print, dt, fracdt,bcount
+  rrfrac=rr*fracdt/exptime
+  m=-2.5*alog10(count/rrfrac)+zp
+  me= (2.5/alog(10)) * (sqrt(count)/rrfrac)/(count/rrfrac)
+  if n_elements(a) gt 1 then mra=moment(ra[a],/nan) else mra=[!values.f_nan,!values.f_nan]
+  if n_elements(a) gt 1 then mdec=moment(dec[a],/nan) else mdec=[!values.f_nan,!values.f_nan]
+  if n_elements(photons) gt 0 then photons=[photons,count] else photons=count
+  if n_elements(mag) gt 0 then mag=[mag,m] else mag=m
+  if n_elements(magerr) gt 0 then magerr=[magerr,me] else magerr=me 
+  if n_elements(time) gt 0 then time=[time,tt] else time=tt
+  if n_elements(avgra) gt 0 then avgra=[avgra,mra[0]] else avgra=mra[0]
+  if n_elements(sdra) gt 0 then sdra=[sdra,sqrt(mra[1])] else sdra=sqrt(mra[1])
+  if n_elements(avgdec) gt 0 then avgdec=[avgdec,mdec[0]] else avgdec=mdec[0]
+  if n_elements(sddec) gt 0 then sddec=[sddec,sqrt(mdec[1])] else sddec=sqrt(mdec[1]) 
+  dt=clockinterval
+ endif else begin
+  dt=dt+clockinterval
+ endelse
+ tt=tt+clockinterval
+endwhile
+
+endif 
+
+
+;;;;;;;;;;;;;;;;;;;;; 
+;;;;;;;;;;;;;;;;;;;;;
+;total integrated mag
+
+intmag= -2.5*alog10(n_elements(t)/rr)+zp
+
+
+;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;
+;make the plot
+
+if keyword_set(ps) then $
+ ps_start,filename=psfile,xsize=6, ysize=8.5,/inches,$
+ xoffset=1.25,yoffset=1.5,charsize=0.8, /color, bits=8 $
+else window, 0, xsize=500, ysize=750
+
+setplotcolors
+
+filter='NUV' & NUV=1 & FUV=0
+;if band eq 'n' then filter='NUV'
+if band eq 'f' then begin
+ filter='FUV'
+ FUV=1
+ NUV=0
+endif
+
+nlcflag2=' '
+intmag0=intmag
+if keyword_set(nlc) then begin
+ mag=gmagnlc(mag,nuv=nuv,fuv=fuv)
+ intmag=gmagnlc(intmag,nuv=nuv,fuv=fuv)
+ nlcflag2=' NLC '
+endif
+
+if keyword_set(adaptivebin) then $
+ bs='adaptive w/snr='+strcompress(string(snr),/rem) else $
+ bs=strcompress(string(binsize,format='(f7.2)'),/rem)+'s'
+
+
+plot,time,mag,$
+ psym=-sym(1),xr=[min(time),1.01*max(time)],/xs,$
+ yr=[max(mag+magerr)+0.1,min(mag-magerr)-0.1],/ys,$
+ title=title,$
+ xtit='Time (seconds, bin='+bs+')',$
+ ytit=filter+nlcflag2+'Mag (includes bg)',symsize=.6,$
+ position=[.12,.65,.95,.95],/norm,/nodata
+
+d=n_elements(mag)/(max(time)-min(time))
+oploterror, time, mag, magerr, $
+ psym=-sym(1),symsize=0.6,$
+ /nohat,nskip=fix(d*2) > 1
+
+gtime=fltarr(n_elements(t))+intmag
+oplot,t-expstart,gtime,psym=3,color=!red
+
+
+;ra,dec,time plotranges
+
+phalfwidth=diam*0.55 ; arcseconds
+rarange=$
+[ra0+phalfwidth/3600./cos(dec0/!radeg),ra0-phalfwidth/3600./cos(dec0/!radeg)]
+decrange=[dec0-phalfwidth/3600.,dec0+phalfwidth/3600.]
+trange=[min(time),max(t)-expstart]
+
+fit=linfit(t-expstart,ra)
+x=indgen((exptime>(max(t)-expstart))*1.5)
+y=fit[0]+x*fit[1]
+
+val1=fltarr(n_elements(ra))+1
+yres=fix((rarange[0]-rarange[1])*3600.) ; 1" res images sweet!
+xres=fix((max(t)-expstart)/5)
+bin2d,xres,yres,trange[0],trange[1],rarange[0],rarange[1],t-expstart,ra,$
+ val1,density,num,1,/tot
+
+loadct,4 ; make sure to erase setplotcolors settings
+gamma_ct,0.5
+
+plotimage,bytscl(sqrt(density)),$ 
+ imgxr=trange,imgyr=rarange,$
+ xr=trange,yr=[rarange[0]+5./3600,rarange[1]-5./3600],$
+ xtit='t (m ='+string(fit[1])+')',ytit='RA',$
+ xtickinterval=(max(time)-min(time))/4,position=[.13,.40,.45,.58],/norm,/noerase
+
+fit=linfit(t-expstart,dec)
+y=fit[0]+x*fit[1]
+
+val1=fltarr(n_elements(ra))+1
+yres=fix((decrange[1]-decrange[0])*3600.) ; 1" res images sweet!
+xres=fix((max(t)-expstart)/5)
+bin2d,xres,yres,trange[0],trange[1],decrange[0],decrange[1],t-expstart,dec,$
+ val1,density,num,1,/tot
+
+plotimage,bytscl(sqrt(density)),$ 
+ imgxr=trange,imgyr=decrange,$
+ xr=trange,yr=[decrange[0]-5./3600,decrange[1]+5./3600],$
+ xtit='t (m='+string(fit[1])+')',ytit='DEC',$
+ xtickinterval=(max(time)-min(time))/4,position=[.63,.40,.95,.58],/norm,/noerase
+
+val1=fltarr(n_elements(ra))+1
+res=fix((decrange[1]-decrange[0])*3600.) ; 1" res images sweet!
+bin2d,res,res,rarange[0],rarange[1],decrange[0],decrange[1],ra,dec,$
+ val1,density,num,1,/tot
+
+plotimage,bytscl(sqrt(density)),$ 
+ imgxr=rarange,imgyr=decrange,$
+ xr=[rarange[0]+5./3600,rarange[1]-5./3600],$
+ yr=[decrange[0]-5./3600,decrange[1]+5./3600],$
+ xtit='RA', ytit='DEC',xticks=2,yticks=3,$
+ position=[.13,.05,.45,.3],/norm,/noerase
+
+
+xyouts,0.52,0.29,'Fld: '+field,/norm
+
+xyouts,0.52,0.26,'RA, DEC: '+string(ra0,format='(f10.5)')+', '+$
+       string(dec0,format='(f10.5)'),/norm
+
+tstart= expstart + (315532800+432000) ; convert (back) to unix time
+xyouts,0.52,0.23,'UTC Start: '+systime(0, tstart,/utc),/norm
+
+tend= expend + (315532800+432000) ; convert (back) to unix time
+xyouts,0.52,0.20,'UTC  End: '+systime(0, tend,/utc),/norm
+
+xyouts,0.52,0.17,'Exptime: '+string(exptime,format='(f8.2)'),/norm
+
+xyouts,0.52,0.14,'Rel. Resp.: '+string(rr,format='(f8.2)'),/norm
+
+xyouts,0.52,0.11,'Ap. Diam.("): '+string(diam,format='(f5.1)'),/norm
+
+xyouts,0.52,0.08,'Int. Mag: '+string(intmag0,format='(f7.3)'),/norm
+
+if keyword_set(nlc) then $
+xyouts,0.52,0.05,'NLC Int. Mag: '+string(intmag,format='(f7.3)'),/norm
+
+if keyword_set(ps) then ps_end
+
+
+;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;
+;write the binned data
+
+openw,lun,datfile,/get_lun
+!textunit=lun
+printf,lun,'# Field       : '+field
+printf,lun,'# Band        : '+filter
+printf,lun,'# RA, DEC     : '+string(ra0,format='(f10.5)')+', '+$
+                          string(dec0,format='(f10.5)')
+printf,lun,'# UTC Start   : '+systime(0, tstart,/utc)
+printf,lun,'# UTC End     : '+systime(0, tend,/utc)
+printf,lun,'# Exptime     : '+string(exptime,format='(f8.2)')
+printf,lun,'# Rel. Resp.  : '+string(rr,format='(f8.2)')
+printf,lun,'# Ap. Diam.("): '+string(diam,format='(f5.1)')
+printf,lun,'# Int. Mag    : '+string(intmag,format='(f7.3)')
+printf,lun,'# unix_time, elapsed_time, mag, magerr, counts, avgra, stdevra, avgdec, stdevdec'
+
+forprint,expstart+(315532800+432000)+time,time,mag,magerr,photons,$
+ avgra,sdra,avgdec,sddec,$
+ /nocomment,textout=5,format='e18.11,f10.3,f8.3,f7.3,i,f12.6,f12.6,f12.6,f12.6'
+
+free_lun,lun
+
+end
+
+
+

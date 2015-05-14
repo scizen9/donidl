@@ -1,0 +1,140 @@
+SAI Supernovae Catalog README
+
+This Catalogue is an export version of The SAI Supernovae Catalogue
+http://www.sai.msu.su/sn/sncat/,  
+suited to be loaded into the PostgreSQL database http://www.postgresql.org/
+for personal usage.
+
+PREREQUISITIE:
+
+    * PostgreSQL version 8.+, 
+
+Download current version of the Catalogue from this location:
+http://www.sai.msu.su/sn/sncat/latest/, as sncat_latest.tar.gz.
+
+FILES:
+
+    * README - this file
+    * VERSION - timestamp of the catalogue (last modification)
+    * initdb.sh - creates database, scheme (sn) and tables
+          o references.sql - create references tables
+          o sncat.sql - create base tables
+    * load.sh - load data
+          o Dump and load tables
+          o view.sql - defines sn_cat
+          o grant.sql - defines permissions
+          o index.sql - defines indices
+    * finish.sh - validation script
+    * SNCOLUMNS - description of base columns of sn_cat view.
+
+DOCUMENTATION:
+
+    * sn_cat - the main table (view)
+    * sn,galaxies - are the base tables
+    * map - is a sn-galaxies mapping
+    * other tables are references
+
+INSTALLATION:
+
+   1. Unpack archive sncat_latest.tar.gz
+   2. cd sncat-yyyy-mm-dd
+   3. sh initdb.sh DBNAME
+   4. sh load.sh DBNAME
+   5. sh finish.sh DBNAME
+
+EXAMPLES:
+
+Sample sql-queries you can use:
+
+    * Produce flat-file catalog ordered by supernovae name:
+          o psql DBNAME -c "SELECT * FROM sn.sn_cat 
+                            ORDER BY sn_name limit 50;"
+
+    * Count supernovae of different types 
+          o psql DBNAME -c "SELECT st.name as SNType, count(*) as Number 
+              FROM sn.sn as s 
+              LEFT OUTER JOIN sn.sntypes as st on (st.id=s.type) 
+              GROUP BY st.name ORDER BY st.name;"
+
+    * List of 10 type-Ia supernovae:
+          o psql DBNAME -c "SELECT * FROM sn.sn as s 
+            LEFT OUTER JOIN sn.sntypes as st on (st.id=s.type)
+            WHERE st.name='Ia' ORDER BY s.name limit 10;"
+
+    * List of type-II supernovae in Elliptical/Lenticular galaxies:
+          o psql DBNAME -c "SELECT s.name, g.name, st.name as sntype,
+            g.type as galtype, g.t
+            FROM sn.galaxies as g,  sn.sn as s
+            LEFT OUTER JOIN sn.sntypes as st on (st.id=s.type)
+            WHERE st.name='II' and s.gid=g.id and g.t <=-1  
+            ORDER BY s.name;"
+
+    * List of type-II supernovae in Spiral galaxies with z>0.05
+          o psql DBNAME -c "SELECT s.name, g.name, st.name as sntype,
+            g.type as galtype, g.z
+            FROM sn.galaxies as g, sn.sn as s
+            LEFT OUTER JOIN sn.sntypes as st on (st.id=s.type)
+            WHERE st.name='II' and s.gid=g.id and substr(g.type,1,1)='S'
+            and g.z > 0.05
+            ORDER BY s.name;"
+
+ 
+    * Maximal redshift of a type-II supernova
+ 
+          o psql DBNAME -c "SELECT max(g.z) 
+            FROM sn.galaxies as g, sn.sn as s
+            LEFT OUTER JOIN sn.sntypes as st on (st.id=s.type)
+            WHERE  st.name='II' and  s.gid=g.id;"
+
+    * Maximal redshift of a supernova discovered in the
+      course of Lick Observatory Supernova Search
+          o psql DBNAME -c "SELECT max(g.z) 
+            FROM sn.galaxies as g, sn.sn as s
+            WHERE  s.gid=g.id and
+            position ( 
+            'LI' in 
+            array_to_string ( array( select survey.name from
+            survey where id = any( s.survey )), ',')
+            )>0
+
+    * Minimal and maximal redshifts of supernovae discovered in the
+      course of Supernova Cosmology Project ( S. Perlmutter et al. )
+          o psql DBNAME -c "SELECT min(g.z),max(g.z) 
+            FROM sn.galaxies as g, sn.sn as s
+            WHERE  s.gid=g.id and
+            position ( 
+            'SC' in 
+            array_to_string ( array( select survey.name from
+            survey where id = any( s.survey )), ',')
+            )>0;"
+
+    * Count the relation of the number of SN Ia in Elliptical galaxies 
+      to that of in all galaxies
+          o psql DBNAME -c " 
+            SELECT( (SELECT count(*) FROM sn.galaxies as g,  sn.sn as s
+            LEFT OUTER JOIN sn.sntypes as st on (st.id=s.type)
+            WHERE st.name='Ia' and  s.gid=g.id and
+            substr(g.type,1,1)='E')*1./
+            ( (SELECT count(*) FROM  sn.galaxies as g,  sn.sn as s
+            LEFT OUTER JOIN sn.sntypes as st on (st.id=s.type)
+            WHERE st.name='Ia' and  s.gid=g.id )*1.)) ;"
+
+    * Count the relation of the number of SN Ia to that of SN II for 
+      supernovae with z<0.1
+          o psql DBNAME -c " SELECT((SELECT count(*) 
+            FROM  sn.galaxies as g,  sn.sn as s
+             LEFT OUTER JOIN sn.sntypes as st on (st.id=s.type)
+            WHERE st.name='Ia' and  s.gid=g.id and z<0.1)*1./ 
+            ((SELECT count(*) FROM sn.galaxies as g,  sn.sn as s
+            LEFT OUTER JOIN sn.sntypes as st on (st.id=s.type)
+            WHERE st.name='II' and  s.gid=g.id and z<0.1)*1.)) ; "
+
+    * Count the relation of the number of SN Ia to that of SN II for 
+      supernovae with z>=0.1
+          o psql DBNAME -c " SELECT((SELECT count(*) 
+            FROM  sn.galaxies as g,  sn.sn as s
+             LEFT OUTER JOIN sn.sntypes as st on (st.id=s.type)
+            WHERE st.name='Ia' and  s.gid=g.id and z>=0.1)*1./ 
+            ((SELECT count(*) FROM sn.galaxies as g,  sn.sn as s
+            LEFT OUTER JOIN sn.sntypes as st on (st.id=s.type)
+            WHERE st.name='II' and  s.gid=g.id and z>=0.1)*1.)) ; "

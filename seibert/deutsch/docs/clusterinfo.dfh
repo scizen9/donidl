@@ -1,0 +1,21 @@
+HISTORY * THIS FILE CONTAINS DEFAULT CLUSTER DEFINITIONS IN FITS HEADER FORMAT *
+HISTORY * WARNING: SINCE THIS FILE IS IN FITS HEADER FORMAT, ALL LINES MUST BE *
+HISTORY *   EXACTLY 80 CHARACTERS LONG, ELSE THINGS MAY NOT WORK!              *
+                                                                                
+CLUSTER = 'U of W Astronomy SunCluster'                                         
+                               / Name of Cluster or Node                        
+PSTSCRPT= 'apache'             / Default B&W Postscript Printer Queue           
+CLRPSCPT= 'no_color_queue'                                                      
+                               / Default Color Postscript Printer Queue         
+PSQLSTFL= '$IDL_MAIN/deutsch/printers.lst'                                      
+                               / File of list of available printers             
+IMGFONTS= '$IDL_MAIN/deutsch/data/'                                             
+                               / Directory where the fonts for IMGtext are      
+                                                                                
+HISTORY * THE FOLLOWING PERTAINS TO THE VMS TAPECOPY ROUTINES ONLY              
+                                                                                
+TAPEIN  = 'MUA0'               / Default Source tape drive for TAPECOPY         
+TAPEOUT = 'MUB0'               / Default Destination tape drive for TAPECOPY    
+TAPEBAT = 'FOSBATCH'           / Default Batch Queue for TAPECOPY               
+SRCHBAT = 'ORACBATCH'          / Default Batch Queue for LOGSRCH                
+END                                                                             

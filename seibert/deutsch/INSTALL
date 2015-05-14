@@ -1,0 +1,109 @@
+                          DEUTSCH Libraries for IDL
+                         Available via Anonymous FTP
+                          Eric W. Deutsch  07/17/95
+
+
+-------------------------------------------------------------------------------
+
+Distribution configurations:
+
+1) Everything except the APO software.  This is most useful for astronomy-
+related work.  This requires a reasonably up-to-date Astronomy User's
+Library.
+ GET: deutsch.tar.Z
+
+2) Everything including the APO software.  This requires a reasonably
+up-to-date Astronomy User's Library.  Only get this installation if you
+want to use the APO (Apache Point Observatory) IDL software routines I've
+written.
+ GET: deutsch_apo.tar.Z
+
+3) Just the miscellaneous routines which may of interest to the general
+IDL user.  I try to include all other routines from other existing libraries
+that get called from my programs.
+ GET: deutsch_misc.tar.Z
+
+
+-------------------------------------------------------------------------------
+
+Installation instructions on unix machines:
+
+If you have the deutsch.tar.Z (or deutsch_apo.tar.Z or deutsch_misc.tar.Z)
+file, copy it to the base of your IDL libraries structure (or wherever
+you like) and extract it:
+
+%  zcat deutsch.tar.Z | tar -xvf -
+
+or the equivalent.  This will create a 'deutsch' directory and fill it
+and other subdirectories as described in the manual installation
+below.
+
+If you already have the Astronomy Users's Library installed locally,
+remove the astron subdirectory.  If you already have the UIT Library
+installed locally, remove the uit subdirectory.
+
+
+-------------------------------------------------------------------------------
+
+Installation instructions on non-unix machines:
+
+Create a "deutsch" directory and the desired subdirectories as follows:
+
+   deutsch  ------  apo		only needed if you want APO related stuff
+            |
+            ------  astron	only needed if you don't already have AstronLib
+            |
+            ------  img		main IMG library
+            |
+            ------  imgroam	IMGroam program and support software
+            |
+            ------  misc	miscellaneous software
+            |
+            ------  docs	various documentation (such as it is)
+            |
+            ------  uit		only needed if you don't already have UIT Lib
+
+
+-------------------------------------------------------------------------------
+
+
+Additional Setup:
+
+1) Add the deutsch libraries to your IDL_PATH perhaps with something like:
+setenv IDL_PATH +$IDL_DIR/deutsch:$IDL_PATH
+
+
+2) Add the deutsch*.help help files to wherever you have your other .help
+files (I actually like to put in symbolic links, but whatever).
+
+
+3) Currently no changes are suggested for the idl_startup.pro file
+
+
+4) The following is optional.  It is not yet well implemented.  It
+struck me as a great idea, but I never ran with it.  The idea is to
+have a cluster (system) and personal file with program defaults in it..
+i.e. any program can have hard-coded defaults, but could also call
+GetDefVal() to find out default values which the user and administror
+can easily set.. this could include default printers, tape drives, and
+anything else.
+
+define the following logicals:
+     setenv IDL_SYSDEF $IDL_DIR/deutsch/docs/clusterinfo.dfh
+     setenv IDL_PRSDEF $HOME/personalinfo.dfh
+or in VMS something like:
+     $ define/nolog IDL_SYSDEF "idl_dir:[deutsch.docs]clusterinfo.dfh"
+     $ define/nolog IDL_SYSDEF "disk$user0:[username.idl]personalinfo.dfh"
+
+These logicals define two files which contain defaults for certain
+programs.  Any program, accordingly written, will first search the
+personal file and then the cluster file or is neither are found use a
+default.  Currently, these files are only used for specifying printer
+queues, tape drives, and so on.
+
+You can edit the "printers.lst" file to contain a list of all the
+printers that are available on the cluster.  This is only useful if you
+plan to use the SETPS and PSCLOSE procedures in the misc library.
+
+Questions or comments should be directed to deutsch@astro.washington.edu.
+

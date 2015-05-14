@@ -1,0 +1,12 @@
+
+plates = strmid(findfile("/home/cat/plates/0*/spZbest*"), 17, 4)
+np = n_elements(plates)
+plates = reverse(plates)
+
+for i = 51, 100  do begin
+  platefit, plates[i], out = plate, /save, /noplot
+;  restore, 'plate' + plates[i] + '.sav'
+  pfitstab, plate 
+endfor
+ 
+end

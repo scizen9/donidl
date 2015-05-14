@@ -1,0 +1,50 @@
+Wayne,
+
+  I have a version of IMGroam installed (sort of) on UIT, although I can't
+seem to really test it...  You should be able to test the program thusly:
+
+$ IDL                 (or WIDL or however you load the WIDGETS version of IDL)
+
+> !path='UIT$USER0:[DEUTSCH.IMG],UIT$USER0:[DEUTSCH.IMGROAM],'+!path
+
+> IMGread,img,h       (or whatever way YOU load an image.  I suggest UIT image
+                       for now until you're more familiar, but IMGroam works
+                       with any 2D image.  For best effect, choose an image
+                       that has Astrometry in the header (works w/ GSSS
+                       astrometry, too.  great for looking at GSSS images.)
+
+> IMGroam,img,h
+
+You will be asked an embarrasing question about Processing Parameters...
+
+You should then get a 512x512 window, and a smaller 256x256 window, and a 
+Widget window to pop up.  For best results have the text window (in which
+you are running IDL) in the lower left corner of the screen (preferably in the
+small font...).  From here, things should be pretty explanatory... moving
+around in the image windows updates the coordinates in the Text window...
+Functions for the Left, Middle, and Right mouse buttons are listed there also.
+The Widget window contains some useful buttons.... The astrometry package is
+closish to being done although a bit more work could make it much better (time,
+time...) Frame processing is still in the old IMGroam 2.0 format and it
+marginally useful...  The Zooming and centroiding and stuff works nicely...
+The PRINT button will create an IDL.PS file but may submit it to the wrong
+queue...
+
+Take it for a little test drive... I and Ralph's other students file it very
+useful for moving around images and looking at various things...  For serious
+photometry and making fancy images, it isn't a great tool, but I really like
+it.... Let me know what sort of comments you have... I have to do some
+thinking on how best to make it easily cluster portable and also easily
+adaptable for others (I should be able to implement the definition of a
+certain button to execute a user defined (or written) procedure...whatever...
+
+I have tested the program briefly on a Sun and it seems to work, although the
+widget implementation is not nearly as spiffy as the DEC Motif one...
+
+You will certainly hit errors, and have to restart... I can't even be certain
+that all the procedures you need are in those two directories... but it
+should be pretty functional....
+
+let me know how you make out...
+
+Eric

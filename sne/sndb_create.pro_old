@@ -1,0 +1,481 @@
+pro sndb_create,silent=silent,verbose=verbose
+;+
+;	gather all the sn data into a master structure
+;-
+; common variable for sndat
+COMMON lowz_sne_info, sndat, snhphsrc
+;
+; test for source file
+if n_elements(snhphsrc) le 0 then sndb_src_read
+;
+; read asiago catalog
+read_asiago_sn,id,host,hra,hdec,ra,dec,htype,htyn,hinc,hpa,vz,hmag,hlgd25,$
+		off_ew,off_ns,filt,mag,mag_type,type,date,disc,silent=silent
+read_sai_sn,dsn,dhost,dhra,dhdec,sna,snd,/silent
+read_snadcomp,csn,choi,/silent
+;
+; define sn structure: see sndb_data__define for definition
+A = {sndb_data}
+A = struct_init(A)
+;
+; sndat
+nsne=n_elements(id)
+sndat=replicate(A,nsne)
+;
+; SN types
+tylist=[ $
+	'I', $
+	'Ia', $
+	'Ib', 'Ib/c', 'Ic', $
+	'IIn', 'IIb', $
+	'IIL', 'IIP', $
+	'II' ]
+nty = n_elements(tylist)
+tyn = indgen(nty)
+tmods = ['pec',':','?','*']	; type modifiers
+;
+; calculate cz
+cz=vz
+t=where(vz gt 0. and vz lt 2.)
+cz[t] = vz[t] * !phys_c
+;
+; populate asiago data
+for i=0L,nsne-1L do begin
+;
+; print status
+	if keyword_set(verbose) then $
+	    print,string(13B),i+1,'/',nsne,id[i],format='($,a1,i5,a,i5,2x,a-8)'
+;
+	sndat[i].id		= string(id[i],format='(a-8)')
+	sndat[i].iau_id		= string(id[i],format='(a-8)')
+	sndat[i].srv_id		= string(id[i],format='(a-8)')
+	sndat[i].srv_name	= 'IAU'
+	sndat[i].type		= string(type[i],format='(a-8)')
+	sndat[i].tyn		= get_sntyn(type[i])
+;
+; Asiago coords are default
+	sndat[i].ra		= ra[i]
+	sndat[i].dec		= dec[i]
+	sndat[i].coo_src	= 'A'
+;
+; use SAI coords if no Asiago coords available
+	if ra[i] lt 0. or dec[i] lt -90. then begin
+		d=where(strpos(dsn,id[i]) ge 0, nd)
+		if nd gt 0 then begin
+			d=d[0]
+			sndat[i].ra	= sna(d)
+			sndat[i].dec	= snd(d)
+			sndat[i].coo_src= 'S'
+		endif
+	endif else begin
+;
+; check comparison between Asiago and SAI if both available
+		w=where(strpos(csn,id[i]) ge 0, nw)
+		if nw eq 1 then begin
+			w=w[0]
+			;
+			; use SAI
+			if choi[w] eq 'S' then begin
+				d=where(strpos(dsn,id[i]) ge 0, nd)
+				if nd gt 0 then begin
+					d=d[0]
+					sndat[i].ra	= sna(d)
+					sndat[i].dec	= snd(d)
+					sndat[i].coo_src= 'S'
+				endif
+			;
+			; use host offset
+			endif else if choi[w] eq 'O' then begin
+				adoffset,hra[i],hdec[i],off_ew[i],off_ns[i],0, $
+					ra1,dec1
+				sndat[i].ra	= ra1
+				sndat[i].dec	= dec1
+				sndat[i].coo_src= 'O'
+			endif
+		endif
+	endelse
+;
+; host coords
+	nhost=get_nga_name(host[i],/silent)
+	get_ned_coord,nhost,eq_ra_j=nra,eq_dec_j=ndec,/silent	; prefer NED
+	if nra lt 0. or ndec lt -90. then begin	; if not NED then ASIAGO
+		nra = hra[i]
+		ndec= hdec[i]
+	endif
+;
+	sndat[i].cz		= cz[i]
+	sndat[i].off_ew		= off_ew[i]
+	sndat[i].off_ns		= off_ns[i]
+	sndat[i].filt		= string(filt[i],format='(a-3)')
+	sndat[i].mag		= mag[i]
+	sndat[i].mag_type	= string(filt[i],format='(a1)')
+	sndat[i].date		= string(date[i],format='(a-12)')
+	sndat[i].discoverer	= string(disc[i],format='(a-36)')
+	sndat[i].host		= string(host[i],format='(a-15)')
+	sndat[i].hra		= nra
+	sndat[i].hdec		= ndec
+	sndat[i].htype		= string(htype[i],format='(a-8)')
+	sndat[i].htyn		= htyn[i]
+	sndat[i].hinc		= hinc[i]
+	sndat[i].hpa		= hpa[i]
+	sndat[i].hmag		= hmag[i]
+	sndat[i].hd25		= 10.^(hlgd25[i]) * 6.	; to arcsec
+;
+; get isophotal and equivalent radii
+	if sndat[i].off_ew gt -9000. and sndat[i].off_ns gt -9000. then begin
+		if sndat[i].hinc gt 0. and sndat[i].hpa gt 0. then begin
+			riso = isorad(sndat[i].hpa,sndat[i].off_ew, $
+				      sndat[i].off_ns,inc=sndat[i].hinc, $
+				      b=b,/silent)
+			sndat[i].r_iso	= riso
+			sndat[i].r_equiv= sqrt(riso*b)	; equivalent radius
+		endif else begin
+			sndat[i].r_iso	= sqrt(sndat[i].off_ew^2 + $
+					       sndat[i].off_ns^2)
+			sndat[i].r_equiv= sndat[i].r_iso
+		endelse
+	endif
+;
+; get linear scale at galaxy
+	lumd = -9.
+	get_ned1d,nhost,snid=sndat[i].id,dmpc=dmpc,mu=mu,/silent
+	if dmpc le 0. then begin
+		get_ned,nhost,cosangd=dmpc,coslummu=mu,/silent
+		if dmpc le 0. then begin
+			z = sndat[i].cz / !phys_c
+			lumd = sullivanlumdist(z,omega_l=!COSMO_OL, $
+				omega_m=!COSMO_OM,h0=!COSMO_H0, $
+							   /silent)
+			dmpc = lumd / (1.+z)^2	; convert to angular size dist.
+		endif
+	endif
+	sscl = ( dmpc / 206265.d0 ) * 1.d6      ; pc / arcsec
+	sndat[i].linear_scale	= sscl
+;
+; get MW E(B-V)
+	glactc,sndat[i].ra,sndat[i].dec,2000.,gall,galb,1,/degree
+	sndat[i].hmwebmv	= dust_getval(gall,galb)
+;
+; get distance modulus
+	if mu le 0. and lumd gt 0. then $
+		mu = -5. + 5. * alog10( lumd * 10.^6 )
+;
+; get aperture sizes in arcseconds
+	sndat[i].ap_res		= 5.6*0.5	; NUV resolution
+	if sscl gt 0. then begin
+	    sndat[i].ap_500pc	= (250./sscl)	; 500pc diam. ap.
+	    sndat[i].ap_1kpc	= (500./sscl)	; 1kpc  diam. ap.
+	    sndat[i].ap_2kpc	= (1000./sscl)	; 2kpc  diam. ap.
+	endif else begin
+	    sndat[i].ap_500pc	= 0.
+	    sndat[i].ap_1kpc	= 0.
+	    sndat[i].ap_2kpc	= 0.
+	endelse
+;
+; get host integrated magnitudes
+;
+; GALEX NGA mags
+	get_nga_phot,nhost,fuv=fmg,errfuv=fmge,nuv=nmg,errnuv=nmge,/silent
+	if fmg gt 0. then $
+		srcfmg='NGA' $
+	else	srcfmg=''
+	if nmg gt 0. then $
+		srcnmg='NGA' $
+	else	srcnmg=''
+;
+; NED mags
+	get_ned_phot,nhost, $
+	    su_t=sumg,errsu_t=sumge,srcsu_t=srcsumg, $
+	    sg_t=sgmg,errsg_t=sgmge,srcsg_t=srcsgmg, $
+	    sr_t=srmg,errsr_t=srmge,srcsr_t=srcsrmg, $
+	    si_t=simg,errsi_t=simge,srcsi_t=srcsimg, $
+	    sz_t=szmg,errsz_t=szmge,srcsz_t=srcszmg, $
+	    u_t=umg,erru_t=umge,srcu_t=srcumg, $
+	    b_t=bmg,errb_t=bmge,srcb_t=srcbmg, $
+	    v_t=vmg,errv_t=vmge,srcv_t=srcvmg, $
+	    j_t=jmg,errj_t=jmge,srcj_t=srcjmg, $
+	    h_t=hmg,errh_t=hmge,srch_t=srchmg, $
+	    k_t=kmg,errk_t=kmge,srck_t=srckmg, $
+	    iras_12m=i12mg,erriras_12m=i12mge,srciras_12m=src12mg, $
+	    iras_25m=i25mg,erriras_25m=i25mge,srciras_25m=src25mg, $
+	    iras_60m=i60mg,erriras_60m=i60mge,srciras_60m=src60mg, $
+	    iras_100m=i100mg,erriras_100m=i100mge,srciras_100m=src100mg, $
+	    ned_gal=ned_gal, /silent
+;
+; extinction correct SDSS mags
+	if sumg gt 0. then $
+		sumg = sumg - sndat[i].hmwebmv * 5.155
+	if sgmg gt 0. then $
+		sgmg = sgmg - sndat[i].hmwebmv * 3.793
+	if srmg gt 0. then $
+		srmg = srmg - sndat[i].hmwebmv * 2.751
+	if simg gt 0. then $
+		simg = simg - sndat[i].hmwebmv * 2.086
+	if szmg gt 0. then $
+		szmg = szmg - sndat[i].hmwebmv * 1.479
+;
+; extinction correct Johnson mags
+	if umg gt 0. then $
+		umg = umg - sndat[i].hmwebmv * 5.434
+	if bmg gt 0. then $
+		bmg = bmg - sndat[i].hmwebmv * 4.315
+	if vmg gt 0. then $
+		vmg = vmg - sndat[i].hmwebmv * 3.315
+;
+; try NED for GALEX mags if not in NGA
+	if fmg lt 0 then begin
+		get_ned_phot,nhost,fuv=fmg,errfuv=fmge,/silent
+		if fmg gt 0 then srcfmg = 'NED'
+	endif
+	if nmg lt 0 then begin
+		get_ned_phot,nhost,nuv=nmg,errnuv=nmge,/silent
+		if nmg gt 0 then srcnmg = 'NED'
+	endif
+;
+; try 2MASS XSC mags if not in LGA
+	if hmg lt 0. then begin
+		get_2mass_phot,host[i],h_t=hmg,errh_t=hmge,/silent
+		if hmg gt 0. then srchmg = 'XSC'
+	endif
+	if jmg lt 0. then begin
+		get_2mass_phot,host[i],j_t=jmg,errj_t=jmge,/silent
+		if jmg gt 0. then srcjmg = 'XSC'
+	endif
+	if kmg lt 0. then begin
+		get_2mass_phot,host[i],k_t=kmg,errk_t=kmge,/silent
+		if kmg gt 0. then srckmg = 'XSC'
+	endif
+;
+	sndat[i].hfuv_int_mag	= fmg
+	sndat[i].hfuv_int_magerr= fmge
+	sndat[i].hfuv_int_src	= sndb_phsrc(srcfmg)
+	sndat[i].hnuv_int_mag	= nmg
+	sndat[i].hnuv_int_magerr= nmge
+	sndat[i].hnuv_int_src	= sndb_phsrc(srcnmg)
+	sndat[i].hu_int_mag	= sumg
+	sndat[i].hu_int_magerr	= sumge
+	sndat[i].hu_int_src	= sndb_phsrc(srcsumg)
+	sndat[i].hg_int_mag	= sgmg
+	sndat[i].hg_int_magerr	= sgmge
+	sndat[i].hg_int_src	= sndb_phsrc(srcsgmg)
+	sndat[i].hr_int_mag	= srmg
+	sndat[i].hr_int_magerr	= srmge
+	sndat[i].hr_int_src	= sndb_phsrc(srcsrmg)
+	sndat[i].hi_int_mag	= simg
+	sndat[i].hi_int_magerr	= simge
+	sndat[i].hi_int_src	= sndb_phsrc(srcsimg)
+	sndat[i].hz_int_mag	= szmg
+	sndat[i].hz_int_magerr	= szmge
+	sndat[i].hz_int_src	= sndb_phsrc(srcszmg)
+	sndat[i].huJ_int_mag	= umg
+	sndat[i].huJ_int_magerr	= umge
+	sndat[i].huJ_int_src	= sndb_phsrc(srcumg)
+	sndat[i].hbJ_int_mag	= bmg
+	sndat[i].hbJ_int_magerr	= bmge
+	sndat[i].hbJ_int_src	= sndb_phsrc(srcbmg)
+	sndat[i].hvJ_int_mag	= vmg
+	sndat[i].hvJ_int_magerr	= vmge
+	sndat[i].hvJ_int_src	= sndb_phsrc(srcvmg)
+	sndat[i].hH_int_mag	= hmg
+	sndat[i].hH_int_magerr	= hmge
+	sndat[i].hH_int_src	= sndb_phsrc(srchmg)
+	sndat[i].hJ_int_mag	= jmg
+	sndat[i].hJ_int_magerr	= jmge
+	sndat[i].hJ_int_src	= sndb_phsrc(srcjmg)
+	sndat[i].hK_int_mag	= kmg
+	sndat[i].hK_int_magerr	= kmge
+	sndat[i].hK_int_src	= sndb_phsrc(srckmg)
+	sndat[i].h12m_int_mag	= i12mg
+	sndat[i].h12m_int_magerr= i12mge
+	sndat[i].h12m_int_src	= sndb_phsrc(src12mg)
+	sndat[i].h25m_int_mag	= i25mg
+	sndat[i].h25m_int_magerr= i25mge
+	sndat[i].h25m_int_src	= sndb_phsrc(src25mg)
+	sndat[i].h60m_int_mag	= i60mg
+	sndat[i].h60m_int_magerr= i60mge
+	sndat[i].h60m_int_src	= sndb_phsrc(src60mg)
+	sndat[i].h100m_int_mag	= i100mg
+	sndat[i].h100m_int_magerr=i100mge
+	sndat[i].h100m_int_src	= sndb_phsrc(src100mg)
+	sndat[i].hmu		= mu
+	sndat[i].hned_gal	= ned_gal
+;
+; end populate asiago data.
+endfor
+print,' '
+;
+; get host abs B mags and Oxygen abundance from Prieto et al.
+if not keyword_set(silent) or keyword_set(verbose) then $
+	print,'Reading metallicities.txt'
+if file_test(!SDSS_DATA+'metallicities.txt') then begin
+	readcol,!SDSS_DATA+'metallicities.txt',msn,mty,mra,mdec, $
+		mhost,mhra,mhdec,sarc,skpc,zed,mb,oab, $
+		format='a,a,d,d,a,d,d,f,f,f,f,f',/silent
+	nmh = n_elements(oab)
+	for i=0L,nmh-1L do begin
+		t=snfind(msn[i],nt)
+		if nt eq 1 then begin
+			t=t[0]
+			if sndat[t].cz lt -900. then $
+				sndat[t].cz = zed[i] * !phys_c
+			sndat[t].hB_abs_mag = mb[i]
+			sndat[t].hO_abund = oab[i]
+			sndat[t].hB_abs_src = sndb_phsrc('Prieto08')
+			sndat[t].hO_abund_src = sndb_phsrc('Prieto08')
+		endif
+	endfor
+endif else print,'metallicities.txt not found'
+;
+; get host B_T mags from Garnier et al. 1996
+if not keyword_set(silent) or keyword_set(verbose) then $
+	print,'Reading garnier96.dat'
+if file_test(!CAT_DATA+'garnier96.dat') then begin
+	readcol,!CAT_DATA+'garnier96.dat',mhost,mpa,mepa,mbt,mebt, $
+		format='a,f,f,f,f',/silent
+	nmh = n_elements(mhost)
+	for i=0L,nmh-1L do begin
+		h=snhfind(mhost[i],nmhf,/silent)
+		if nmhf gt 0 then begin
+;
+; get B-band extinction
+			if sndat[h[0]].hmwebmv gt -1. then $
+				extin = 4.315 * sndat[h[0]].hmwebmv $
+			else	extin = 0.0
+;
+; apply to all SNe in this host
+			for j=0L,nmhf-1L do begin
+;
+; but only if not already there
+			    if sndat[h[j]].hbJ_int_mag lt 0. then begin
+				sndat[h[j]].hbJ_int_mag = mbt[i] - extin
+				sndat[h[j]].hbJ_int_magerr = mebt[i]
+				sndat[h[j]].hbJ_int_src = $
+					sndb_phsrc('Garnier96')
+			    endif
+			endfor
+		endif
+	endfor
+endif else print,'garnier96.dat not found'
+;
+; get SDSS integrated host data from NYU value-added catalog
+if not keyword_set(silent) or keyword_set(verbose) then $
+	print,'Reading lowz_plus_ned.dr6.fits'
+if file_test(!SDSS_DATA+'lowz_plus_ned.dr6.fits') then begin
+	sdss=mrdfits(!SDSS_DATA+'lowz_plus_ned.dr6.fits',1,slhdr,/silent)
+	for i=0L,nsne-1L do begin
+		gcirc,2,sndat[i].hra,sndat[i].hdec,sdss.ra,sdss.dec,dis
+		h=where(dis lt 10. and sdss.lowz eq 1,nh)
+		if nh gt 0 then begin
+;
+; print status
+		    if keyword_set(verbose) then $
+			print,string(13B),i+1,'/',nsne,sndat[i].id, $
+				format='($,a1,i5,a,i5,2x,a-8)'
+;
+; get best entry
+		    dis2 = dis(h)
+		    pp= where(dis2 eq min(dis2))
+		    p = h[pp[0]]
+		    if finite(sdss[p].absmag[0]) then begin
+		    	sndat[i].hu_abs_mag = sdss[p].absmag[0]
+		    	sndat[i].hu_abs_magerr = sqrt(1./sdss[p].absmag_ivar[0])
+			sndat[i].hu_abs_src = sndb_phsrc('NYU')
+		    endif
+		    if finite(sdss[p].absmag[1]) then begin
+		    	sndat[i].hg_abs_mag = sdss[p].absmag[1]
+		    	sndat[i].hg_abs_magerr = sqrt(1./sdss[p].absmag_ivar[1])
+			sndat[i].hg_abs_src = sndb_phsrc('NYU')
+		    endif
+		    if finite(sdss[p].absmag[2]) then begin
+		    	sndat[i].hr_abs_mag = sdss[p].absmag[2]
+		    	sndat[i].hr_abs_magerr = sqrt(1./sdss[p].absmag_ivar[2])
+			sndat[i].hr_abs_src = sndb_phsrc('NYU')
+		    endif
+		    if finite(sdss[p].absmag[3]) then begin
+		    	sndat[i].hi_abs_mag = sdss[p].absmag[3]
+		    	sndat[i].hi_abs_magerr = sqrt(1./sdss[p].absmag_ivar[3])
+			sndat[i].hi_abs_src = sndb_phsrc('NYU')
+		    endif
+		    if finite(sdss[p].absmag[4]) then begin
+		    	sndat[i].hz_abs_mag = sdss[p].absmag[4]
+		    	sndat[i].hz_abs_magerr = sqrt(1./sdss[p].absmag_ivar[4])
+			sndat[i].hz_abs_src = sndb_phsrc('NYU')
+		    endif
+		    if finite(sdss[p].absmag[5]) then begin
+		    	sndat[i].hJ_abs_mag = sdss[p].absmag[5]
+		    	sndat[i].hJ_abs_magerr = sqrt(1./sdss[p].absmag_ivar[5])
+			sndat[i].hJ_abs_src = sndb_phsrc('NYU')
+		    endif
+		    if finite(sdss[p].absmag[6]) then begin
+		    	sndat[i].hH_abs_mag = sdss[p].absmag[6]
+		    	sndat[i].hH_abs_magerr = sqrt(1./sdss[p].absmag_ivar[6])
+			sndat[i].hH_abs_src = sndb_phsrc('NYU')
+		    endif
+		    if finite(sdss[p].absmag[7]) then begin
+		    	sndat[i].hK_abs_mag = sdss[p].absmag[7]
+		    	sndat[i].hK_abs_magerr = sqrt(1./sdss[p].absmag_ivar[7])
+			sndat[i].hK_abs_src = sndb_phsrc('NYU')
+		    endif
+	sndat[i].hu_int_mag	= 22.5 - 2.5 * alog10(sdss[p].modelflux[0]) - $
+			sdss[p].extinction[0]
+	sndat[i].hu_int_magerr	= $
+	1.0857362 * sqrt(1./sdss[p].modelflux_ivar[0]) / sdss[p].modelflux[0]
+	sndat[i].hu_int_src = sndb_phsrc('NYU')
+	sndat[i].hg_int_mag	= 22.5 - 2.5 * alog10(sdss[p].modelflux[1]) - $
+			sdss[p].extinction[1]
+	sndat[i].hg_int_magerr	= $
+	1.0857362 * sqrt(1./sdss[p].modelflux_ivar[1]) / sdss[p].modelflux[1]
+	sndat[i].hg_int_src = sndb_phsrc('NYU')
+	sndat[i].hr_int_mag	= 22.5 - 2.5 * alog10(sdss[p].modelflux[2]) - $
+			sdss[p].extinction[2]
+	sndat[i].hr_int_magerr	= $
+	1.0857362 * sqrt(1./sdss[p].modelflux_ivar[2]) / sdss[p].modelflux[2]
+	sndat[i].hr_int_src = sndb_phsrc('NYU')
+	sndat[i].hi_int_mag	= 22.5 - 2.5 * alog10(sdss[p].modelflux[3]) - $
+			sdss[p].extinction[3]
+	sndat[i].hi_int_magerr	= $
+	1.0857362 * sqrt(1./sdss[p].modelflux_ivar[3]) / sdss[p].modelflux[3]
+	sndat[i].hi_int_src = sndb_phsrc('NYU')
+	sndat[i].hz_int_mag	= 22.5 - 2.5 * alog10(sdss[p].modelflux[4]) - $
+			sdss[p].extinction[4]
+	sndat[i].hz_int_magerr	= $
+	1.0857362 * sqrt(1./sdss[p].modelflux_ivar[4]) / sdss[p].modelflux[4]
+	sndat[i].hz_int_src = sndb_phsrc('NYU')
+		endif 
+	endfor
+endif else print,'lowz_plus_ned.dr6.fits not found'
+print,' '
+;
+; add supernovae from other surveys (non-IAU)
+sndb_updt_snsurvey,nsne
+;
+; fix any data (we use /nosave in case there is nothing to fix)
+sndb_catfix,/nosave
+;
+; update hyper LEDA data
+sndb_updt_hleda,verbose=verbose,silent=silent
+;
+; update GLGA data
+sndb_updt_glga_int,verbose=verbose,silent=silent
+;
+; update SN site data
+sndb_updt_site,verbose=verbose,silent=silent
+;
+; update profile analysis data
+sndb_updt_prof,verbose=verbose,silent=silent
+;
+; update light curve data
+sndb_updt_lcfit,verbose=verbose,silent=silent
+;
+; save file
+savfile=!SNE_DATA+'/lowz_sne_info.sav'
+;
+; mv old save file
+filestamp,savfile,/verbose,/arch
+;
+; create save file
+print,'Saving lowz SNe info to: ',savfile
+save,sndat,filename=savfile,/verbose
+;
+return
+end

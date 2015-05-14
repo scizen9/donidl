@@ -1,0 +1,16 @@
+
+The following is a list of suggested guide stars based on the HST GSC 1.1.
+This service is currently experimental.  If you use these suggested
+guide stars, please report all successes and failures to
+deutsch@astro.washington.edu so this service may be improved and
+advertised as being more reliable.
+
+In the list(s) of stars below, the following data is provided:
+  Mag         - The GSC magnitude of the star
+  Angle       - The Instrument Angle at which the Guider contains the star
+  Radius      - The radial distance from the instrument center to the star
+  Off Center  - A measure of how close to the center of the Guider the star is.
+                -1 is at the inner edge of the annulus and should be avoided
+                ~0 great!  near the middle of the annulus
+                +1 is at the outer edge of the annulus and should be avoided
+

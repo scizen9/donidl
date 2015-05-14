@@ -1,0 +1,367 @@
+%VERSION:2
+18
+142
+0:ASTDISP
+1035:DEFANSI
+1828:DISPBAR
+2441:DRAWCROSS
+3206:IMGBORD
+3972:IMGROAM
+5662:IMSTAT
+6087:IR_CNTRD
+6317:IR_KBDHNDLR
+7471:IRSFLOAD
+8726:IRSFOUT
+9331:IRSFSAVE
+9907:PIXEDIT
+10093:PIXEDIT2
+10279:UIT_SKY_VALUE
+10459:USER_KBD
+11384:XMESSAGE
+12615:YESNO2
+;+
+ NAME:
+   ASTDISP
+ DESCRIPTION:
+   This procedure prints of the X,Y,RA,DEC,DN in a standard format.  X,Y must
+   be supplied.  RA,DEC may also be supplied, and a DN may also be supplied.
+   With use of the Coords= keyword, a string containing the formatted data
+   can be returned in addition or instead (with /silent) of printing.
+ INPUT:
+   X         The X pixel coordinate
+   Y         The Y pixel coordinate
+ OPTIONAL INPUT:
+   RA        Right Ascention
+   DEC       DEClination  (if RA is supplied, DEC must also be supplied)
+   DN        Data Number
+ OPTIONAL INPUT KEYWORDS:
+   SILENT    Prevents printing.  Only useful when used with Coords=
+ OUTPUT:
+   Printed positions in both degrees and sexigesimal format
+   All passed variables remain unchanged
+ OPTIONAL KEYWORD OUTPUT:
+   COORDS    Returns the formatted coordinates in a string
+ HISTORY:
+   10-AUG-90 Version 1 written by Eric W. Deutsch
+   20-AUG-91 Converted to standard header.  Vectorized Code.  E. Deutsch
+   20-NOV-92 Added Coords= and /silent.  E.Deutsch
+;-
+;+
+ NAME:
+   DEFANSI
+ DESCRIPTION:
+   This procedure defines a few ANSI screen control sequences and puts
+   them in a COMMON block.  To use these sequences, include the COMMON
+   block at the beginning of the procedure and call the procedure.
+ CALLING SEQUENCE:
+   DefANSI,define
+ INPUT:
+   DEFINE    The variable controls whether the sequences are defined or
+               cleared.  (0=Clear,1=Define) (Default=Defined=1)
+               It is desirable to clear the ANSI variables when doing a HELP,
+               because they cause the display to beep, clear, etc.
+ OUTPUT:
+   COMMON ANSI,CR,LF,esc,UP,CLRSCRN,BELL,DOWN,RIGHT,LEFT,NORMAL,BOLD, $
+     REVERSE,BLINKING
+ HISTORY:
+   03-JUL-90 Version 1 written by Eric Deutsch
+   24-AUG-91 Added a few more ANSI sequences   (E. Deutsch)
+;-
+;+
+ NAME:
+   DISPBAR
+ DESCRIPTION:
+   This procedure creates and displays a color bar on the screen.
+ CALLING SEQUENCE:
+   DISPBAR,cbllx,cblly,cbx,cby,Border=Border
+ INPUT:
+   CBLLX     Color Bar Lower Left hand X coordinate
+   BCLLY     Color Bar Lower left hand Y coordinate
+   CBX       Color Bar X length
+   CBY       Color Bar Y height
+ OUTPUT:
+   Screen output only.  All passed variables remain unchanged.
+ OPTIONAL FLAGS:
+   BORDER    Puts a white (BLACK in PS) border around the color bar.
+ HISTORY:
+   30-MAY-90 Version 1 written by Eric W. Deutsch
+   24-AUG-91 Added /Border Keyword    (E. Deutsch)
+;-
+;+
+ NAME:
+   DRAWCROSS
+ DESCRIPTION:
+   This procedures draws a graphics cursor-like cross centered at the
+   supplied X,Y data coordinates.  Size and thickness can be supplied.  the
+   /top keyword puts a littel hat on top of the cross as a distinguishing
+   mark from a regular cross.
+ INPUT:
+   XC        The X center coordinate
+   YC        The Y center coordinate
+   RADIUS    Radial size of the cross
+ OPTIONAL INPUT KEYWORDS:
+   TOP       Setting /TOP puts a "hat" distinguishing mark on top of cross
+   THICK     Sets the thickness of the cross (generally only useful with
+               PostScript (high resolution) output).
+ OUTPUT:
+   Draws cross to current graphics channel
+ HISTORY:
+   27-MAY-94 Added header and description to old code.  E.Deutsch
+;-
+;+
+ NAME:
+   IMGBORD
+ DESCRIPTION:
+     This procedure puts a border of the specified color and thickness
+   around an image of the specified size and offset WITHOUT writing over
+   the image.  Therefore, an image with an offset of 0,0 cannot have a
+   border.  Move the image over.
+ INPUT:
+   COLOR     the color for the border.  depends on the color table.  def=255
+   THICK     the thickness of the border lines (in pixels)  def=1
+   XSIZE     the Xsize of the image to be framed
+   YSIZE     the Ysize of the image to be framed
+   XOFF      the Xoffset of the image to be framed
+   YOFF      the Yoffset of the image to be framed
+ OUTPUT:
+   The border itself
+   all passed variables remain unchanged
+ HISTORY:
+   30-MAY-90 Version 1 written  Eric W. Deutsch
+;-
+;+
+ NAME:
+   IMGROAM
+ PURPOSE:
+   IMGroam is a program which is designed to simplify routine
+   examination of images.  IMGroam provides facilities to easily move around
+   an image, zooming, and displaying cursor coordinates both X,Y and RA,DEC
+   if a plate solution is provided.  The stretch can be interacticely adjusted,
+   facilities for creating and tranfering plate solutions are available.
+ CALLING SEQEUNCE:
+   IMGroam,image,header,[frame]
+ INPUT:
+   IMAGE     The 2D image array to be examined.
+   HEADER    The corresponding string array GEIS header.  In fact, this
+               parameter does not NEED to be supplied, and if it is not, then
+               one can just examine the array passed with IMAGE.  If the
+               array is an astronomical image, it is usually wise to supply
+               the header.  But, for example, if one reads in a .GIF file,
+               or other 2D data array, the array may be examined with
+               IMGroam without supplying any header.
+ OPTIONAL OUTPUT:
+   FRAME     This parameter can return the currently displayed frame when
+               IMGroam is exited.
+ EXAMPLE:
+   >IMGread,img,h                  ; Read in an image (Pickfile available)
+   >IMGroam,img,h                  ; Examine the image
+      or
+   >tmp=indgen(512,512)            ; Create some array
+   >IMGroam,tmp                    ; Use IMGroam to examine array
+ HISTORY:
+   25-MAY-90 Original Alpha Test Version 1.0 'completed' by Eric W. Deutsch
+     (countless undocumented additions, revisions, etc.)
+   02-DEC-92 DIST_COORD_CONV support added for UIT images.  EWD
+   06-DEC-92 Version 3.1 completed.  EWD
+   03-APR-93 Version 3.2 released.  EWD
+;-
+;+
+ NAME:
+   IMSTAT
+ DESCRIPTION:
+   This procedure prints out various image "statistics" namely mean, max,
+   minimum, and a sky value of a 20x20 pixel box centered at the supplied
+   X,Y coorddinates.
+ INPUT:
+   X         The X pixel coordinate
+   Y         The Y pixel coordinate
+ OUTPUT:
+   Printed statistics
+   All passed variables remain unchanged
+ HISTORY:
+   27-MAY-94 Header added to old code by Eric W. Deutsch
+;-
+;+
+ PROCEDURE:
+   IR_cntrd,image,xguess,yguess,xcen,ycen,FWHM,info=info
+ PURPOSE:
+   This procedure is called by IMGRoam so as to provide an indepdant
+   method of calling a centroiding algorithm.  Several can be
+   available.
+;-
+;+
+ IR_KbdHndlr,image,img1,mx,my
+
+ This is the main keyboard handler for IMGroam.  It calls the procedure
+ User_Kbd first and then handles the default operations.  The use of
+ common blocks are required to communicate with IMGroam.
+
+ Calls: User_Kbd,image,img1,mx,my,KeyHit
+   image  -  whole image
+   img1   -  currently displayed frame
+   mx     -  current x cursor position in whole image 
+   my     -  current y cursor position in whole image
+               center of lower left pixel is (0.00,0.00)
+   KeyHit -  The (first) character hit.  Note that there may be more
+               characters in the keyboard buffer and the first
+               character could be an ESC, the first character of an
+               escape sequence (e.g. up arrow).
+   When adding a function to User_Kbd, be sure that the procedure does
+   not disturb the value in KeyHit unless it processes the Key Hit, at
+   which point it should set KeyHit='' so that if you are overriding the
+   default key calls, they are not called, too...
+   Remember to take case sensitivity into account!
+   The keyboard buffer is flushed after both the User and default handler
+   runs.
+;-
+;+
+ NAME:
+   IRSFLoad
+ PURPOSE:
+   Load an IMGroam Star File (IRSF) specified by file into a structure.
+ CALLING SEQEUNCE:
+   IRSFload,filename,ss,/silent
+ INPUT:
+   FILENAME  The filename of the IRSF file (it is highly recommended that
+               the file extensions are .irsf although it is not required.)
+ OUTPUT:
+   SS        The 'Saved_Stars' structure into which the file is read.
+               int          stars    Number of stars stored
+               intarr(1000)  ID       Some star number (sequential or not)
+               strarr(1000)  Name     String Name for star
+               dblarr(1000)  X        X Position of Star
+               dblarr(1000)  Y        Y Position of Star
+               dblarr(1000)  RA       RA Coordinate of Star
+               dblarr(1000)  DEC      DEC Coordinate of Star
+               fltarr(1000)  Mag      Magnitude of Star
+ OPTIONAL INPUT:
+   SILENT    If set, the 'n stars loaded' message will not print.
+   BLANK     If set, then the filename is ignored and a blank structure
+               is returned.
+ HISTORY:
+   10-DEC-92 Header finally added to this procedure which has been in use for
+     three or more years.  Name changed from GS_SFLoad.  All versions
+     and header by Eric W. Deutsch
+;-
+;+
+ NAME:
+   IRSFout
+ PURPOSE:
+   Convert an IRSF structure into a regular list file (e.g. for imalign)
+ CALLING SEQEUNCE:
+   IRSFout,filename,ss,[/XY,/RADEC,/ID]
+ INPUT:
+   FILENAME  The filename of the output file (e.g. stars.lis
+   SS        The 'Saved_Stars' structure from which the file is generated.
+ OPTIONAL INPUT:
+   XY        If set, the X and Y coordinates are written.
+   RADEC     If set, the RA and DEC coordinates are written.
+   ID        If set, the ID's are written.
+ HISTORY:
+   15-JAN-95 Written by Eric W. Deutsch
+   18-DEC-96 Added capability to write ID field.  Eric W. Deutsch
+;-
+;+
+ NAME:
+   IRSFSave
+ PURPOSE:
+   Save an IMGroam Star File (IRSF) specified by file from the structure.
+ CALLING SEQEUNCE:
+   IRSFSave,filename,ss,/silent
+ INPUT:
+   FILENAME  The filename of the IRSF file (it is highly recommended that
+               the file extensions are .irsf although it is not required.)
+ OUTPUT:
+   SS        The 'Saved_Stars' structure which is saved.
+ HISTORY:
+   10-DEC-92 Header finally added to this procedure which has been in use for
+     three or more years.  Name changed from GS_SFSave.  All versions
+     and header by Eric W. Deutsch
+;-
+;+
+ PIXEDIT is a primitive Cosmic Ray remover.  I replaces the nxn section
+ of the image centered on the given X,Y with some random continuum-level stuff
+   Call: pixedit,image,mx,my
+;-
+;+
+ PIXEDIT is a primitive Cosmic Ray remover.  I replaces the 3x3 section
+ of the image centered on the given X,Y with some random continuum-level stuff
+   Call: pixedit,image,mx,my
+;-
+;+
+  Call: UIT_sky_value,img,skyv,maxv
+   This procedure is much like DJL's SKY_VALUE is calling sequence but
+   but it optimaized to return nice display values for UIt images.
+;-
+;+
+ Calls: User_Kbd,image,img1,mx,my,KeyHit
+   image  -  whole image
+   img1   -  currently displayed frame
+   mx     -  current x cursor position in whole image 
+   my     -  current y cursor position in whole image
+               center of lower left pixel is (0.00,0.00)
+   KeyHit -  The (first) character hit.  Note that there may be more
+               characters in the keyboard buffer and the first
+               character could be an ESC, the first character of an
+               escape sequence (e.g. up arrow).
+   When adding a function to User_Kbd, be sure that the procedure does
+   not disturb the value in KeyHit unless it processes the Key Hit, at
+   which point it should set KeyHit='' so that if you are overriding the
+   default key calls, they are not called, too...
+   Remember to take case sensitivity into account!
+   The keyboard buffer is flushed after botht the User and default handler
+   runs.
+;-
+;+
+NAME:
+      XMESSAGE
+PURPOSE:
+      Routine to pop up little widget dialog boxes.  Each box contains
+      a message and some buttons.  The user sees the message and chooses
+      a button, the index of which is returned to the calling procedure.
+CALLING SEQUENCE:
+      XMESSAGE,message,buttons_array,Ret_Pushed_button
+INPUTS:
+      MESSAGE  - A scalar string of the message.  The '\' indicates a
+                 forced line break, and the message is parsed into
+                 ~50 character lines by xmessage.
+      BUTTONS  - A vector of buttons labels (e.g. ['OK','CANCEL','HELP'] )
+OUTPUTS:
+      RET_PUSH - Index of the button the user pushed (first button is 0)
+PROCEDURE:
+      Message is parsed and displayed with the provided buttons.  User
+      pushes a button and the index is returned.  This procedure is
+      intentionally flexible.  All sorts of goodies can be thought up.
+EXAMPLES:
+   xmessage,'You must select at least 3 stars before you can create an '+ $
+     'astrometric solution',['OK','CANCEL','Try Anyway'],Ret_Val
+
+   xmessage,'File '+filename+' already exists!  Do you want to: ', $
+     ['Replace','View File','CANCEL'],Ret_Val
+MODIFICATION HISTORY
+      05-JUN-94  Written by Eric W. Deutsch
+;-
+;+
+ NAME:
+   YESNO2
+ PURPOSE:
+   This function returns a string corresponding YES/NO to 1/0.  i.e. if a 1
+   is passed to YESNO2, the string 'YES' or 'Yes' or 'yes' or 'y' is returned.
+ CALLING SEQEUNCE:
+   tmp=yesno2(1,type=1)
+ INPUT:
+   FLAG      This variable should contain 1 for YES and 0 for NO.
+ OPTIONAL KEYWORDS:
+   TYPE      Specifies the mode or type of returned string (default=0)
+      Other equivalents:
+   type= 0    1    2     3    4    5      6     7     8    9   10  11    12
+   F=1 'YES','Y','Yes','yes','y','yup',  'ON', 'On', 'on','X','1','Si' , 'Ja'
+   F=0  'NO','N', 'No', 'no','n','nope','OFF','Off','off',' ','0','Non','Nein'
+   OTHER     Specifies what to return if flag is neither 0 nor 1.
+ OUTPUT:
+   tmp       The string containing the answer
+ NOTES:
+   none
+ HISTORY:
+   02-JUN-92  Older Version of YesNo2 Finished and documented.   E. Deutsch
+;-

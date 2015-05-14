@@ -1,0 +1,105 @@
+SIMPLE  =                    F / Written by IDL:  17-May-1995 12:18:53.00       
+BITPIX  =                   16 /No.Bits per pixel                               
+NAXIS   =                    2 /No.dimensions                                   
+NAXIS1  =                 1413 /Length X axis                                   
+NAXIS2  =                 1413 /Length Y axis                                   
+DATE    = '08/05/95          ' /Date of FITS file creation                      
+ORIGIN  = 'CASB -- STScI     ' /Origin of FITS image                            
+PLTLABEL= 'E593              ' /Observatory plate label                         
+PLATEID = '06Z0              ' /GSSS Plate ID                                   
+REGION  = 'XE106             ' /GSSS Region Name                                
+DATE-OBS= '16/09/52          ' /UT date of Observation                          
+UT      = '03:41:00.00       ' /UT time of observation                          
+EPOCH   =  1.9527081298828E+03 /Epoch of plate                                  
+PLTRAH  =                   20 /Plate center RA                                 
+PLTRAM  =                   34 /                                                
+PLTRAS  =  5.9909600000000E+01 /                                                
+PLTDECSN= '+                 ' /Plate center Dec                                
+PLTDECD =                   60 /                                                
+PLTDECM =                   30 /                                                
+PLTDECS =  4.2372900000000E+00 /                                                
+EQUINOX =  2.0000000000000E+03 /Julian Reference frame equinox                  
+EXPOSURE=  5.0000000000000E+01 /Exposure time minutes                           
+BANDPASS=                    8 /GSSS Bandpass code                              
+PLTGRADE=                    1 /Plate grade                                     
+PLTSCALE=  6.7200000000000E+01 /Plate Scale arcsec per mm                       
+SITELAT = '+33:24:24.00      ' /Latitude of Observatory                         
+SITELONG= '-116:51:48.00     ' /Longitude of Observatory                        
+TELESCOP= 'Palomar 48-inch Schmidt'/Telescope where plate taken                 
+CNPIX1  =                 6504 /X corner  (pixels)                              
+CNPIX2  =                 6736 /Y corner                                        
+DATATYPE= 'INTEGER*2         ' /Type of Data                                    
+SCANIMG = 'XE106_06Z0_00_00.PIM'/Name of original scan                          
+SCANNUM =                    0 /Identifies scan of the plate                    
+DCHOPPED=                    F /Image repaired for chopping effects             
+DSHEARED=                    F /Image repaired for shearing effects             
+DSCNDNUM=                    0 /Identifies descendant of plate scan image       
+XPIXELSZ=  2.5284450000000E+01 /X pixel size microns                            
+YPIXELSZ=  2.5284450000000E+01 /Y pixel size microns                            
+PPO1    =  0.0000000000000E+00 /Orientation Coefficients                        
+PPO2    =  0.0000000000000E+00 /                                                
+PPO3    =  1.7497471555000E+05 /                                                
+PPO4    =  0.0000000000000E+00 /                                                
+PPO5    =  0.0000000000000E+00 /                                                
+PPO6    =  1.7497471555000E+05 /                                                
+AMDX1   =  6.7249673332080E+01 /Plate solution x coefficients                   
+AMDX2   = -3.3582582052590E-01 /                                                
+AMDX3   = -1.9208839249470E+02 /                                                
+AMDX4   = -2.6025885709480E-05 /                                                
+AMDX5   = -1.8014852765470E-05 /                                                
+AMDX6   =  2.7303395688730E-06 /                                                
+AMDX7   =  0.0000000000000E+00 /                                                
+AMDX8   =  1.7252842161720E-06 /                                                
+AMDX9   =  2.1835507199280E-08 /                                                
+AMDX10  =  2.4148354417460E-06 /                                                
+AMDX11  = -7.0054880454020E-08 /                                                
+AMDX12  =  0.0000000000000E+00 /                                                
+AMDX13  =  0.0000000000000E+00 /                                                
+AMDX14  =  0.0000000000000E+00 /                                                
+AMDX15  =  0.0000000000000E+00 /                                                
+AMDX16  =  0.0000000000000E+00 /                                                
+AMDX17  =  0.0000000000000E+00 /                                                
+AMDX18  =  0.0000000000000E+00 /                                                
+AMDX19  =  0.0000000000000E+00 /                                                
+AMDX20  =  0.0000000000000E+00 /                                                
+AMDY1   =  6.7265098153530E+01 /Plate solution y coefficients                   
+AMDY2   =  3.3612160276610E-01 /                                                
+AMDY3   = -2.9292740317710E+02 /                                                
+AMDY4   = -2.1249984015680E-05 /                                                
+AMDY5   = -1.7805580558070E-05 /                                                
+AMDY6   =  7.7770290226230E-06 /                                                
+AMDY7   =  0.0000000000000E+00 /                                                
+AMDY8   =  1.5755066221500E-06 /                                                
+AMDY9   =  1.1509433477420E-08 /                                                
+AMDY10  =  2.1459777169550E-06 /                                                
+AMDY11  =  2.2473668667880E-08 /                                                
+AMDY12  =  0.0000000000000E+00 /                                                
+AMDY13  =  0.0000000000000E+00 /                                                
+AMDY14  =  0.0000000000000E+00 /                                                
+AMDY15  =  0.0000000000000E+00 /                                                
+AMDY16  =  0.0000000000000E+00 /                                                
+AMDY17  =  0.0000000000000E+00 /                                                
+AMDY18  =  0.0000000000000E+00 /                                                
+AMDY19  =  0.0000000000000E+00 /                                                
+AMDY20  =  0.0000000000000E+00 /                                                
+        Based on photographic data of the National Geographic Society -- Palomar
+        Observatory Sky Survey (NGS-POSS) obtained using the Oschin Telescope on
+        Palomar Mountain.  The NGS-POSS was funded by a grant from the National 
+        Geographic Society to the California Institute of Technology.  The      
+        plates were processed into the present compressed digital form with     
+        their permission.  The Digitized Sky Survey was produced at the Space   
+        Telescope Science Institute under US Government grant NAG W-2166.       
+                                                                                
+        Investigators using these scans are requested to include the above      
+        acknowledgements in any publications.                                   
+                                                                                
+        Copyright (c) 1994, Association of Universities for Research in         
+        Astronomy, Inc.  All rights reserved.                                   
+DATAMAX =                14704 /Maximum data value                              
+DATAMIN =                  303 /Minimum data value                              
+OBJECT  = 'n693              ' /Object ID                                       
+OBJCTRA = '20 33 26.064      ' /Object Right Ascension (J2000)                  
+OBJCTDEC= '+60 39 55.26      ' /Object Declination (J2000)                      
+OBJCTX  =              7210.25 /Object X on plate (pixels)                      
+OBJCTY  =              7442.64 /Object Y on plate (pixels)                      
+END                                                                             

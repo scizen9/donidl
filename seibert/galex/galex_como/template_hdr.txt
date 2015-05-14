@@ -1,0 +1,35 @@
+SIMPLE  =                    T / file does conform to FITS standard             
+BITPIX  =                  -32 / number of bits per data pixel                  
+NAXIS   =                    2 / number of data axes                            
+NAXIS1  =                 3840 / length of data axis 1                          
+NAXIS2  =                 3840 / length of data axis 2                          
+EXTEND  =                    T / FITS dataset may contain extensions            
+COMMENT   FITS (Flexible Image Transport System) format is defined in 'Astronomy
+COMMENT   and Astrophysics', volume 376, page 359; bibcode: 2001A&A...376..359H 
+LONGSTRN= 'OGIP 1.0'           / The HEASARC Long String Convention may be used.
+COMMENT   This FITS file may contain long string keyword values that are        
+COMMENT   continued over multiple keywords.  The HEASARC convention uses the &  
+COMMENT   character at the end of each substring which is then continued        
+COMMENT   on the next keyword which has the name CONTINUE.                      
+CDELT1  = -0.000416666666666667                                                 
+CDELT2  = 0.000416666666666667                                                  
+EQUINOX =                2000.                                                  
+EPOCH   =                2000.                                                  
+CTYPE1  = 'RA---TAN'                                                            
+CTYPE2  = 'DEC--TAN'                                                            
+CRPIX1  =               1920.5                                                  
+CRPIX2  =               1920.5                                                  
+CRVAL1  =            149.14885                                                  
+CRVAL2  =            69.364883                                                  
+CROTA2  =                   0.                                                  
+BUNIT   = '        '                                                            
+BSCALE  =                   1.                                                  
+BZERO   =                   0.                                                  
+EPOCH   =                2000.                                                  
+BAND    =                    1                                                  
+OW      =                    1                                                  
+RA_CENT =                 999.                                                  
+DEC_CENT=                 999.                                                  
+OBJECT  = ' '                                                  
+EXPTIME =                   0.                                                  
+END                                                                             

@@ -1,0 +1,81 @@
+;+
+;*NAME:
+;			cspline
+;
+;*PURPOSE:
+; function to evaluate a cubic spline at specified data points
+;
+;*CALLING SEQUENCE:
+;	result=cspline(x,y,t)
+;
+;*PARAMETERS:
+; INPUTS:
+;	x - vector of spline node positions
+;	y - vector of node values
+;	t - x-positions to evaluate the spline at
+;
+; OUTPUT:
+;	the values for positions t are returned as the fuction value
+;                               
+; METHOD:
+;	NUMERICAL RECIPES - natural cubic spline is used.
+;
+; HISTORY:
+;	version 1  D. Lindler  May, 1989
+;       Mar 16 1991      JKF/ACC    - forced doubleword to avoid
+;					integer overflow errors.
+;	version 2  D. Lindler  Dec, 1991	- moved to IDL V2.
+;	version 3 JKF/ACC	28-jan-1992 - handle not found case of WHERE
+;-
+;--------------------------------------------------------------------------
+	function cspline,xx,yy,tt
+;
+	x= double(xx)
+	y= double(yy)
+	t= double(tt)
+
+	n=n_elements(x)
+	y2=dblarr(n)		;vector of 2nd direvatives at nodes in xtab
+	u=dblarr(n)
+;
+; decomposition loop of tridiagonal algorithm
+;
+	for i=1,n-2 do begin
+		sig=(x(i)-x(i-1))/(x(i+1)-x(i-1))
+		p=sig*y2(i-1)+2.
+		y2(i)=(sig-1.0)/p
+		u(i)=(6.0*((y(i+1)-y(i))/(x(i+1)-x(i))-(y(i)-y(i-1))/$
+			(x(i)-x(i-1)))/(x(i+1)-x(i-1))-sig*u(i-1))/p
+	end
+;
+; backsubstitution
+;
+	for i=n-2,0,-1 do y2(i)=y2(i)*y2(i+1)+u(i)
+;
+; find locations of t in xtab using bisection
+;
+	m=n_elements(t)
+	klo=lonarr(m)
+	khi=replicate(n-1,m)
+bisect:
+	not_done=((khi-klo) gt 1)
+	if max(not_done) gt 0 then begin
+		k=(khi+klo)/2
+		higher=x(k) gt t
+		sub=where(not_done and higher, sub_found)
+		if sub_found gt 0 then khi(sub)=k(sub)
+		sub=where(not_done and (not higher), sub_found)
+		if sub_found gt 0 then klo(sub)=k(sub)
+		goto,bisect
+	endif
+;
+; x(klo) and x(khi) now bracket t
+;
+	xhi=x(khi)
+	xlo=x(klo)
+	h=xhi-xlo
+	a=(xhi-t)/h
+	b=(t-xlo)/h
+	return,a*y(klo)+b*y(khi)+((a^3-a)*y2(klo)+(b^3-b)*y2(khi))*(h^2)/6.0
+	end
+

@@ -1,0 +1,32 @@
+function mode, array, binsize
+;+
+; mode - return mode using binsize
+;-
+; Calculates the MODE (value with the maximum frequency distribution)
+; of an array. Works ONLY with integer data.
+
+On_Error, 2
+
+; Check for arguments.
+IF N_Elements(array) EQ 0 THEN print, 'Must pass an array argument.'
+
+; Is the data an integer type? If not, exit.
+;dataType = Size(array, /Type)
+;IF ((dataType GT 3) AND (dataType LT 12)) THEN $
+;	print, 'Data is not INTEGER type.'
+
+; Calculate the distribution frequency
+distfreq = Histogram(array, binsize=binsize, MIN=Min(array))
+
+; Find the maximum of the frequency distribution.
+maxfreq = Max(distfreq)
+
+; Find the mode.
+mode = Where(distfreq EQ maxfreq, count) + Min(array)
+
+; Warn the user if the mode is not singular.
+IF count NE 1 THEN print,'The MODE is not singular.'
+
+RETURN, mode
+
+END

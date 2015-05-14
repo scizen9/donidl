@@ -1,0 +1,45 @@
+
+# Check for changes in the Goddard library routines
+
+diff $DAVEHOME/idl/goddard/pro/astro/daycnv.pro daycnv.pro
+diff $DAVEHOME/idl/goddard/pro/astro/get_date.pro get_date.pro
+diff $DAVEHOME/idl/goddard/pro/fits/fxposit.pro fxposit.pro
+diff $DAVEHOME/idl/goddard/pro/fits/headfits.pro headfits.pro
+diff $DAVEHOME/idl/goddard/pro/fits/mrd_hread.pro mrd_hread.pro
+diff $DAVEHOME/idl/goddard/pro/fits/sxaddpar.pro sxaddpar.pro
+diff $DAVEHOME/idl/goddard/pro/fits/sxpar.pro sxpar.pro
+diff $DAVEHOME/idl/goddard/pro/fits_bintable/fxaddpar.pro fxaddpar.pro
+diff $DAVEHOME/idl/goddard/pro/fits_bintable/fxhread.pro fxhread.pro
+diff $DAVEHOME/idl/goddard/pro/fits_bintable/fxpar.pro fxpar.pro
+diff $DAVEHOME/idl/goddard/pro/fits_bintable/fxparpos.pro fxparpos.pro
+diff $DAVEHOME/idl/goddard/pro/fits_bintable/fxread.pro fxread.pro
+diff $DAVEHOME/idl/goddard/pro/jhuapl/datatype.pro datatype.pro
+diff $DAVEHOME/idl/goddard/pro/jhuapl/repchr.pro repchr.pro
+diff $DAVEHOME/idl/goddard/pro/misc/break_path.pro break_path.pro
+diff $DAVEHOME/idl/goddard/pro/misc/def_dirlist.pro def_dirlist.pro
+diff $DAVEHOME/idl/goddard/pro/misc/detabify.pro detabify.pro
+diff $DAVEHOME/idl/goddard/pro/misc/expand_tilde.pro expand_tilde.pro
+diff $DAVEHOME/idl/goddard/pro/misc/fdecomp.pro fdecomp.pro
+diff $DAVEHOME/idl/goddard/pro/misc/find_all_dir.pro find_all_dir.pro
+diff $DAVEHOME/idl/goddard/pro/misc/find_with_def.pro find_with_def.pro
+diff $DAVEHOME/idl/goddard/pro/misc/gettok.pro gettok.pro
+diff $DAVEHOME/idl/goddard/pro/misc/host_to_ieee.pro host_to_ieee.pro
+diff $DAVEHOME/idl/goddard/pro/misc/ieee_to_host.pro ieee_to_host.pro
+diff $DAVEHOME/idl/goddard/pro/misc/mrd_skip.pro mrd_skip.pro
+diff $DAVEHOME/idl/goddard/pro/misc/numlines.pro numlines.pro
+diff $DAVEHOME/idl/goddard/pro/misc/rdfloat.pro rdfloat.pro
+diff $DAVEHOME/idl/goddard/pro/misc/readcol.pro readcol.pro
+diff $DAVEHOME/idl/goddard/pro/misc/remchar.pro remchar.pro
+diff $DAVEHOME/idl/goddard/pro/misc/spec_dir.pro spec_dir.pro
+diff $DAVEHOME/idl/goddard/pro/misc/strnumber.pro strnumber.pro
+diff $DAVEHOME/idl/goddard/pro/misc/valid_num.pro valid_num.pro
+diff $DAVEHOME/idl/goddard/pro/misc/wherenan.pro wherenan.pro
+diff $DAVEHOME/idl/goddard/pro/misc/where_negzero.pro where_negzero.pro
+diff $DAVEHOME/idl/goddard/pro/misc/zparcheck.pro zparcheck.pro
+diff $DAVEHOME/idl/goddard/pro/astro/euler.pro euler.pro
+diff $DAVEHOME/idl/goddard/pro/astro/precess.pro precess.pro
+diff $DAVEHOME/idl/goddard/pro/astro/adstring.pro adstring.pro
+diff $DAVEHOME/idl/goddard/pro/astro/premat.pro premat.pro
+diff $DAVEHOME/idl/goddard/pro/astro/radec.pro radec.pro
+diff $DAVEHOME/idl/goddard/pro/astro/sixty.pro sixty.pro
+

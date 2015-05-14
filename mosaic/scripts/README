@@ -1,0 +1,14 @@
+1) you'll need a file with name, RA, Dec, D_25 (or whatever radius of interest)
+
+2) then, run 'get_driver.pro'
+
+3) upload the resulting foot.list file to http://das.sdss.org/www/html/post_coords.html and use this page to generate a wget list for the corrected frames (ugriz) and tsField files.  optionally also get the drField files
+
+4) run wget.  you'll get lot's of duplicates, so maybe allow clobbering.  is hould probably include a step to filter the wget script.
+
+5) run sort_fits.pro to distribute the frames and tsField files into directories (which will have names as in your file)
+
+6) run mega_driver.pro (just the sdss part).  you should set the /skytweak switch if you want to get the sky to be good across the fields
+
+
+!!!all these scripts need to be tweaked for output filenames, sizes, plate scale!!!!!

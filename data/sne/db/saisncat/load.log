@@ -1,0 +1,108 @@
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+SET
+BEGIN
+CREATE VIEW
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+COMMENT
+GRANT
+COMMIT
+SET
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+GRANT
+SET
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+psql:index.sql:11: WARNING:  skipping "pg_authid" --- only table or database owner can vacuum it
+psql:index.sql:11: WARNING:  skipping "pg_database" --- only table or database owner can vacuum it
+psql:index.sql:11: WARNING:  skipping "pg_shdepend" --- only table or database owner can vacuum it
+psql:index.sql:11: WARNING:  skipping "pg_shdescription" --- only table or database owner can vacuum it
+psql:index.sql:11: WARNING:  skipping "pg_auth_members" --- only table or database owner can vacuum it
+psql:index.sql:11: WARNING:  skipping "pg_tablespace" --- only table or database owner can vacuum it
+psql:index.sql:11: WARNING:  skipping "pg_pltemplate" --- only table or database owner can vacuum it
+VACUUM

@@ -1,0 +1,107 @@
+                        DEUTSCH (IMG) Library for IDL
+                         Available via Anonymous FTP
+                          Eric W. Deutsch  07/17/95
+
+
+Host: www.astro.washington.edu
+Dir: /pub/idl/deutsch
+WWW: http://www.astro.washington.edu/deutsch/idl/
+
+
+-------------------------------------------------------------------------------
+
+The DEUTSCH IMG library contains a collection of procedures useful for
+astronomical work under the IDL Programming Language.  There are
+several "general purpose" routines that others not working in astronomy
+may also find useful.  However, many of these procedures call other
+procedures in the Astronomy User's Library (from Wayne Landsman @GSFC).
+
+
+-------------------------------------------------------------------------------
+
+Distribution configurations:
+
+1) Everything except the APO software.  This is most useful for astronomy-
+related work.  This requires a reasonably up-to-date Astronomy User's
+Library.
+ GET: deutsch.tar.Z
+
+2) Everything including the APO software.  This requires a reasonably
+up-to-date Astronomy User's Library.  Only get this installation if you
+want to use the APO (Apache Point Observatory) IDL software routines I've
+written.
+ GET: deutsch_apo.tar.Z
+
+3) Just the miscellaneous routines which may of interest to the general
+IDL user.  I try to include all other routines from other existing libraries
+that get called from my programs.
+ GET: deutsch_misc.tar.Z
+
+
+-------------------------------------------------------------------------------
+
+A brief discussion of what you will find in this library can be found
+in the notes/imglib.doc file.  Installation instructions can be found
+in the INSTALL file.  The library should works mostly on both VMS and
+Unix platforms, but since the library is currently being developed on a
+Unix Solaris 2.6 system, small (fixable) problems may crop up on
+other platforms; please report them.
+
+If you find some of these procedures useful, I would be delighted to
+hear from you via email. You may send questions, comments, and
+suggestions to deutsch@astro.washington.edu.  If you make improvements
+to existing code, please Email along the changes.  The current
+organization of the library is somewhat half-done; not all of the
+procedures have proper headers, but hopefully that will come someday
+soon.  In the mean time some procedures here may be of use to others.
+Note that changes are likely to be frequent.  If you would like to
+receive notices of important changes, send me Email and I will add your
+address to the distribution.
+
+
+-------------------------------------------------------------------------------
+
+How to obtain the IMG library:
+
+% ftp ftp.astro.washington.edu        (IP=128.95.99.14)
+    login: anonymous
+    password: <your email address>
+> cd /pub/idl/deutsch
+> get README
+
+If you can uncompress and untar tar files, you may simply get the tar file:
+
+> binary
+> get deutsch.tar.Z
+         or
+> get deutsch_apo.tar.Z
+         or
+> get deutsch_misc.tar.Z
+
+Or otherwise, create the directories described in the INSTALL file and then
+obtain all the files in the subdirectories by hand:
+
+> get INSTALL
+   (see details contained within)
+> cd img
+> lcd [.img]
+> mget *.*
+> cd ../misc
+> lcd [-.misc]
+> mget *.*
+ etc.
+
+(assuming local VMS system.)
+
+
+
+See the INSTALL file for information on how to install the library
+
+
+
+----------------------------------------------------------------------------
+Eric Deutsch                             email: deutsch@astro.washington.edu
+Department of Astronomy                                Voice: (206) 616-2788
+University of Washington                                 FAX: (206) 685-0403
+Box 351580                      WWW: http://www.astro.washington.edu/deutsch
+Seattle, WA  98195-1580                  Physics/Astronomy Bldg., Room B356F

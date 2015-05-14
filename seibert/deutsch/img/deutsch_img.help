@@ -1,0 +1,1117 @@
+%VERSION:2
+39
+304
+0:A10READ
+796:BLACKSKY
+1265:BSCENTRD
+3265:CALC_A
+4088:CALC_ZDHA
+4315:CLEANEXAMINE
+4961:DELAST
+5226:DIAGFIND
+5801:DIAGMARK
+6208:DIAGRAM
+6889:DOFIND
+7075:DOSTAT
+7298:EXTCAT_AC2000
+7737:EXTRAC
+10867:GSC_READ
+12769:GSCA10COMP
+13354:GSCTAB2LST
+13560:HLINES
+13732:IMGCLEAN
+20612:IMGCLEAN122
+22708:IMGPASTE
+23214:IMGPUT
+23341:IMGREAD
+26743:IMGTEXT
+28726:IMGUNDER
+29687:IMSCL
+30148:OBJCENOM
+31323:QUICKSPLIT
+31750:QUICKSPLIT2
+32178:RADPROF
+33712:RADPROF2
+35246:SKY_VALUE
+35544:SKYHORIZ
+36220:SKYPOS
+36924:STARFIT
+37582:UJCHART
+37694:WAVG
+37805:WFPCMRG
+40865:WHITESKY
+;+
+ NAME:
+	A10READ
+
+ PURPOSE:
+	Compare coordinates of stars in a GSC (gsclist) file and a USNO-A1.0
+	(a10list) file.
+
+ CATEGORY:
+	Catalog software
+
+ CALLING SEQUENCE:
+	a10read,a10file,data
+
+ INPUTS:
+	a10file: The filename of an USNO-A1.0 extraction
+		which contains the target field and the surrounding region.
+
+ OUTPUTS:
+	data:	Array containing A1.0 catalog data.  e.g.:
+	 RA (deg)  2000  Dec (deg)  B mag  R mag  Field  GSC?  Err?  Zone
+	 ------------  -----------  -----  -----  -----  ----  ----  ----
+	   267.148225   -37.177994   22.8   18.1    393     0     0   525
+	   267.148233   -37.326064   23.9   18.7    393     0     0   525
+
+ PROCEDURE:
+
+ EXAMPLE:
+
+ MODIFICATION HISTORY:
+	01/03/97 Written by E. Deutsch
+	01/14/98 Modified to autodetect and also read HTML format.  E. Deutsch
+
+;-
+;+
+ NAME:
+   BLACKSKY
+ PURPOSE:
+   Changes current color table to white on black.
+ CALLING SEQEUNCE:
+   BlackSky
+ INPUT:
+   none
+ OUTPUT:
+   Changes current color table and updates color table COMMON block.
+ HISTORY:
+   17-NOV-92 Header added to old routine  (E. Deutsch)
+   11-JAN-93 Changed name from POS to BLACKSKY  (E. Deutsch)
+   04-APR-94 Added proper handling when !d.n_colors is low.  (E. Deutsch)
+   29-APR-97 Added limit of !d.n_colors=256.  (E. Deutsch)
+;-
+;+
+ NAME: 
+   BSCENTRD
+ PURPOSE:
+   Compute "center of mass" centroid coordinates of a stellar object.  This
+   procedure is considerable slower than the Astronomy libraries' CNTRD
+   procedure, but yields much better results for small "BAD STARS", i.e.
+   small scruffy objects which don't necessarily have a good shape.  It also
+   avoids the CNTRD problem of ignoring a small star next to a much brighter
+   one even if the exact coordinates are supplied.  Results seem to be of
+   comperable accuracy (based on comaprisons of residuals when transferring
+   solutions to higher resolution images) on bright sources and can measure
+   many sources CNTRD is not capable of.  Careful study of results of this
+   algorithm versus other popular ones still needs to be done.  In general,
+   results are quite good, actually.  The author uses is for ALL measurement
+   work, not just "BAD STARS".
+ CALLING SEQUENCE: 
+   BSCENTRD,img,xguess,yguess,xcen,ycen,[FWHM],[/INFO]
+ INPUTS:     
+   IMG      Two dimensional image array
+   XGUESS   Scalar giving approximate X stellar center
+   YGUESS   Scalar giving approximate Y stellar center
+ OPTIONAL OUTPUT:
+   FWHM     Returned approximate FWHM.  Not terribly accurate.  Needs work.
+ OUTPUTS:   
+   XCEN     The computed X centroid position.  -1 if unable to centroid
+   YCEN     The computed Y centroid position.  -1 if unable to centroid
+  OPTIONAL OUTPUT KEYWORDS:
+   INFO     If set, BScentrd prints out some informational statistics.  They
+              are pretty good for small stars but not for large stars.
+              This needs some work, too.
+ PROCEDURE: 
+   Nearest peak to the specified GUESS coordinates is determined.  Appriximate
+   extent of star is determined and nearby stars are masked out.  Center of
+   "mass" of the remaining star information is returned.
+ MODIFICATION HISTORY:
+   06-JUN-90 Written by Eric Deutsch
+             numerous undocumented adjustments made over time
+   04-APR-93 Header spiffed up for release.  EWD.
+;-
+;+
+ NAME:
+   CALC_A
+ PURPOSE:
+   Returns the extinction of the supplied wavelength and E(B-V) using the
+   Seaton Extinction curve through the UNRED procedure.
+ CALLING SEQEUNCE:
+   Calc_A,wavelenth,[EBmV],[value=value]
+ INPUT:
+   WAVELENTH This must be the scalar wavelength for which the extinction
+               is to be calculated (in Angstroms).
+ OPTIONAL INPUT:
+   EBmV      This scalar contains the optional value for E(B-V).  If this
+               value is not supplied the factor times which E(B-V) should
+               be multiplied by is returned.
+   SILENT    This Keyword, if set, prevents the result from being displayed.
+ OPTIONAL OUTPUT:
+   VALUE     If this keyword is supplied the value is returned into this
+               variable.
+ HISTORY:
+   17-NOV-92 Header added to old routine  (E. Deutsch)
+;-
+;+
+ NAME:
+   calc_ZDHA
+ PURPOSE:
+   Calculate Zenith distance and Hour Angle and Azimuth given local standard
+   time, latitude, longitude, ra, and dec.
+ CALLING SEQEUNCE:
+   calc_ZDHA,lst,latitude,longitude,ra,dec,ZD,HA,AZ
+;-
+;+
+ NAME:
+   CLEANEXAMINE
+ PURPOSE:
+   This procedure is designed to aid in the examination of the results of
+   of a run of IMGclean, although there are other uses for the program.
+   In addition to "examining" the difference between the two images, one
+   can edit and replace to remove CR's that IMGclean missed and also fix
+   mistakes where IMGclean damaged a star.
+ EXAMPLE:
+   IDL> IMGread,imgorig,horig,'w0c0401t.c0h',2
+   IDL> img=imgorig & h=horig
+   IDL> IMGclean,img,h,cr
+   IDL> cleanexamine,imgorig,img,cr
+
+ HISTORY
+   93-APR-01  Finally added header to this procedure.  Eric Deutsch
+   97-MAY-27  Complete rework.  Eric Deutsch
+;-
+;+
+ NAME:
+   DELAST
+ PURPOSE:
+   Deletes all astrometric information from a header.  Mainly useful for
+   deleting screwy "astrometry" that IRAF delights in fouling up the
+   header with (e.g., "PIXEL", "SYSTEM", etc. CTYPEs)
+ CALLING SEQEUNCE:
+   delast,header
+;-
+;+
+ NAME:
+   DIAGFIND
+ PURPOSE:
+   This procedures finds all (or first) star(s) within 0.1 magnitudes of 
+   a cursor click on the CM diagram output of diagram.pro and prints out
+   relevant lines and draws arrow to object.
+ CALLING SEQEUNCE:
+   diagfind,diagramoutfile,[x=,y=,/first]
+ INPUT:
+   DIAGRAMOUTFILE  Output file of diagram.pro.  Typically diagram.out.
+ OPTIONAL KEYWORD:
+   X      Returned X value.
+   Y      Returned Y value.
+   FIRST  Set theis flag to 1 if the program should stop looking after the
+          first match instead of looking for all matches.
+;-
+;+
+ NAME:
+   DIAGMARK
+ PURPOSE:
+   This procedures finds all stars within radius pixels of x,y and draws
+   a line to it on the output window of diagram.pro
+ CALLING SEQEUNCE:
+   diagmark,infile,xc,yc,radius
+ INPUT:
+   INFILE  Output file of diagram.pro.  Typically diagram.out.
+   X       X coordinate of star to look for.
+   Y       Y coordinate of star to look for.
+   RADIUS  Search radius about X,Y
+;-
+;+
+ NAME:
+   DIAGRAM
+ PURPOSE:
+   Generate a snazzy color-magnitude diagram with a variety of options
+   and input formats.  Everything is controlled via a self-documenting
+   parameter file instead of keywords or parameters
+ CALLING SEQEUNCE:
+   diagram,paramfile,[/ps,/SkipRead,/DontWrite]
+ INPUT:
+   PARAMFILE This is the name of a diagram.pro parameter file.
+ OPTIONAL KEYWORDS:
+   PS        Write to Postscript instead of the screen.
+   SkipRead  Remember and use the most recently-read dataset.
+   DontWrite Don;t bother to write diagram.out and diagram.dmp (much faster).
+ HISTORY:
+   01-AUG-96 Added Header to program which has been evolving for years
+     (E. Deutsch)
+;-
+;+
+ Procedure: DoFind,filename
+
+  This procedure through the output of DoPHOT in the COMPLETE
+ format only for an object of the specified coordinates
+
+  dofind,filename,xc,yc,srchrad
+;-
+;+
+ Procedure: DoStat,filename
+
+  This procedure returns statistics of the output of DoPHOT in the COMPLETE
+ format only!  The number of different object types are counted up and the
+ results are printed to the screen.
+
+;-
+;+
+ NAME:
+	EXTCAT_AC2000
+
+ PURPOSE:
+	Extract a region out of the AC 2000 CD-ROM.
+
+ CATEGORY:
+	Catalog software
+
+ CALLING SEQUENCE:
+	extcat_ac2000,outfile,ra,dec,boxwidth
+
+ INPUTS:
+	outfile	  Filename of output file
+	ra	  Central RA in degrees of box
+	dec	  Central DEC in degrees of box
+	boxwidth  Width of extraction box in degrees 
+
+ OUTPUTS:
+	The file
+
+ PROCEDURE:
+
+ EXAMPLE:
+
+ MODIFICATION HISTORY:
+	01/27/98 Written by E. Deutsch
+
+;-
+;+
+ NAME:
+	EXTRAC
+
+ PURPOSE:
+	The EXTRAC function returns as its result any rectangular sub-matrix
+	or portion of the parameter array.  When parts of the specified
+	subsection lie outside the bounds of the array, zeros are
+	entered into these outlying elements.
+
+	EXTRAC was originally a built-in system procedure in the PDP-11
+	version of IDL, and was retained in that form in the original VAX/VMS
+	IDL for compatibility.  Most applications of the EXTRAC function
+	are more concisely written using subscript ranges (e.g., X(10:15)).  In
+	the current release of IDL, EXTRAC has been rewritten as a User Library
+	function that provides the same interface as the previous versions.
+
+ CATEGORY:
+	Array Manipulation.
+
+ CALLING SEQUENCE:
+	Result = EXTRAC(Array, C1, C2, ..., Cn, S1, S2, ..., Sn)
+
+ INPUTS:                 
+	Array:	The array from which the subarray will be copied.
+
+	Ci:	The starting subscript in Array for the subarray. There
+		should be one Ci for each dimension of Array.
+
+	Si:	The size of each dimension.  The result will have dimensions
+		of (S1, S2, ..., Sn). There should be one Si for each
+		dimension of Array.
+
+ OUTPUTS:
+	This function returns a two-dimensional, floating-point,
+	interpolated array.
+
+ RESTRICTIONS:
+	In order to make the most typical cases run quickly, little error 
+	checking is done on the input.  In particular, the Ci and Si arguments
+	must all be scalar integers, and the Si must be non-negative.
+
+	If you know that the subarray will never lie beyond the edges of
+	the array, it is more efficient to use array subscript ranges
+	to extract the data instead of EXTRAC. 
+
+ PROCEDURE:
+	If the subarray lies entirely inside the Array argument, the
+	standard array subscript-range mechanism is used to do the work.
+	Otherwise, a zeroed array of the correct type and size is
+	created, and the overlapping subarray is copied into it.
+
+ EXAMPLES:
+	EXAMPLE 1:
+	Define a 1000 point vector with each element initialized to
+	its subscript.  Extract a 300 pt. vector, starting at A(200) and
+	going to A(499).  B(0) will be equal to A(200), B(299) will be
+	equal to A(499).  Enter:
+
+	    A = FINDGEN(1000)
+	    B = EXTRAC(A, 200, 300)
+
+	EXAMPLE 2:
+	Here, the first 49 points extracted (B(0) to B(49)) lie outside
+	the bounds of the vector and are set to 0.  B(50) is set to A(0),
+	B(51) is set to A(1) which is 1, ... Enter:
+
+	    A = FINDGEN(1000)
+	    B = EXTRAC(A, -50, 100)
+
+	EXAMPLE 3:
+	The following commands illustrate the use of EXTRAC with multi-
+	dimensional arrays.  Enter:
+
+	    A = INTARR(64,64)	;Make a 64X64 matrix to play with
+
+	Take out a 32X32 portion starting at A(20,30) by entering:
+
+	    B = EXTRAC(A, 20, 30, 32, 32)
+
+	A better way to perform the same operation as the previous line is:
+
+	    B = A(20:51, 30:61)
+
+	Extract the 20th column and 32nd row of A:
+
+	    B = EXTRAC(A, 19, 0, 1, 64)	; Extract 20th column of A
+	    B = EXTRAC(A, 0, 31, 64, 1)	; Extract 32nd row of A
+
+	Take a 32X32 matrix from A starting at A(40,50).
+
+	    B = EXTRAC(A, 40, 50, 32, 32)
+
+	NOTE: Those points beyond the boundaries of A are set to 0.
+
+ REVISION HISTORY:
+	July 18, 1989	Written AB, RSI
+;-
+;+
+ NAME:
+   GSC_READ
+ DESCRIPTION:
+   This procedure reads a ST Guide Star format file and returns the stars in
+   an array of structures with fields ID,StrID,RA,DEC,MAG.
+ CALLING SEQUENCE:
+   GSC_Read,FILE,LS,[Trgt_Coord],[/silent,/Duplicates,/Verbose,MaxStars=]
+ INPUT:
+   FILE      The Name of the File to Load
+ OUTPUT:
+   LS        The array of Stuctures containing the star information.  The
+               fields are given above.  Address the String ID of the sixth
+               star with ls(5).StrID
+             Note that ls(0).ID will equal -1 if the file could not be loaded.
+ OPTIONAL OUTPUT:
+   TRGT_COORD  The [RA,DEC] of the Target as listed at the top of the GSC file.
+ OPTIONAL FLAGS/PARAMETERS:
+   SILENT     If set, all messages including error messages are inhibited.
+                This keyword overrides the VERBOSE keyword.
+   DUPLICATES If set, duplicate stars will be KEPT.  The default is to keep
+                only the first of duplicate stars, which appear frequently
+                in the STGSC (when a star appears on more than one plate.)
+   VERBOSE    If set, informational messages (Targets Coords, Equinox, Stars
+                read, duplicates skipped) WILL be printed.
+   MAXSTARS   The stars information is initally loaded into a huge array and
+                then chopped down to the appropriate size when all stars are
+                loaded.  The default value is 2000.  Increase for huge files.
+   RArange    Allows the selection of Stars within this VECTOR [MIN,MAX] RA.
+   DECrange   Allows the selection of Stars within this VECTOR [MIN,MAX] DEC.
+ HISTORY:
+   24-AUG-91 Updated, fixed, and made more user-friendly procedure STGSFREAD
+             (EWD) and renamed to GSC_Read   (Eric W. Deutsch)
+   29-JAN-92 Changed trgt_RA,trgt_DEC to one parameter Trgt_Coord    (EWD)
+   29-JAN-92 Added RArange and DECrange keywords and selection code  (EWD)
+;-
+;+
+ NAME:
+	GSCA10COMP
+
+ PURPOSE:
+	Compare coordinates of stars in a GSC (gsclist) file and a USNO-A1.0
+	(a10list) file.
+
+ CATEGORY:
+	APO software
+
+ CALLING SEQUENCE:
+	gsca10comp,gscfile,a10file,[/plot]
+
+ INPUTS:
+	gscfile: The filename of an HST Guide Star Catalog (GSC) extraction
+		which contains the target field and the surrounding region.
+
+	a10file: The filename of an USNO-A1.0 extraction
+		which contains the target field and the surrounding region.
+
+ OUTPUTS:
+	Screen image or postscript file.
+
+ PROCEDURE:
+
+ EXAMPLE:
+
+ MODIFICATION HISTORY:
+	01/01/97 Written by E. Deutsch
+
+;-
+;+
+ convert a FITS table from IRAF 'regions' task into the ascii list like
+ that outputted by the VAXes.  -Deutsch 4/3/94
+
+ Call> gsctab2lst,inputtab,outlst
+ e.g.> gsctab2lst,'47tuc.tab','47tuc.gsclst'
+
+;-
+;+
+ NAME:
+   HLINES
+ PURPOSE:
+   Print out some optical Hydrogren lines.
+ CALLING SEQEUNCE:
+   hlines,[nlines]
+ INPUT:
+   NLINES  Number of lines desired in each series
+;-
+;+
+ NAME:
+   IMGclean
+ PURPOSE:
+     This procedure is designed to remove cosmic ray hits (CRs) from an image,
+   especially WFPC images.  The procedure's effectiveness varies from image
+   to image.  Often, it does an excellent job, but sometimes
+   the operational parameters must be modified (via keywords) to tweak
+   the performance of the software.
+     It should not be assumed that this procedure will automatically do a good
+   job!  Keep a close eye on before and after images.  Occaisionally, a faint
+   star gets obliterated, especially if there is a cosmic ray around 3 pixels
+   from it.  Naturally, this procedure is only recommended when a CR split is
+   not possible, as that will often yield better results.
+     Run IMGclean twice on the same image to acheive best cleaning results
+   especially on images with very dense CR's.
+     Still in a somewhat primitive state, this procedure still need some
+   improvement to the algorithm.  Suggestions welcome to deutsch@stsci.edu.
+     Use the CLEANEXAMINE main program to examine the results of the IMGclean
+   run.
+     Cuyrrently, IMGclean is tweaked for PC images.  I haven't worked with
+   WF images in a while, so you may to diddle with the parameters for best
+   effect.
+ CALLING SEQEUNCE:
+   IMGclean,IMAGE,HEADER,[CR_ARRAY],[optional keywords]'
+   IMGclean,/help
+ INPUT/OUTPUT PARAMETERS:
+   IMAGE     This parameter supplies the image in which the CRs are to be
+               removed.  This image is MODIFIED!  The output cleaned image
+               is returned via this variable.
+   HEADER    This parameter is the FITS header.  The header will be modified
+               with added HISTORY notes and keywords detailing the settings
+               used on the last IMGclean run.
+ OPTIONAL OUTPUT:
+   CR_ARRAY  This array is a BYTE array of the same size as the input image
+               containing some information of which pixels the software
+               considered, and what descisions it made as far as CR or STAR.
+                   DN    Meaning
+                   70    Low scan pixel not removed
+                  120    Hi scan pixel not removed (i.e. suspected star)
+                  255    Hi scan pixel removed (i.e. cosmic ray)
+                  200    Neighboring Low scan pixel removed
+ OPTIONAL INPUT:
+   HELP             Displays quick keyword defaults values
+   TESTRUN          If set, dumps a file with stats on each object considered
+   STAR_PSF_SENS    Sensitivity of the STAR checking.
+                     The higher the value, the more CRs will be left in the
+                     image because they are suspected as being stars.  The
+                     lower the value, the more faint stars will be removed.
+                     Default=.35  Typical=.35, .25, .30, .40.
+                      -Value: .35 is probably the optimum value for doing a
+                       good job with CR's but leaving virtually faint
+                       scrungy stars for PC frames.
+                      -Value: .25 is probably the optimum value for doing
+                       the best possible job of cleaning CR's at the
+                       expense of removing a few more faint scrungy stars
+                       than is proper.  If faint, scrungy stars are not
+                       important, this may be the best setting (again, PC).
+   SKY_VAL_SAMP_SZ  Size of the boxes used when calculating the local
+                     background.  The X,Y image size must be a multiple of the
+                     box size.  Use smaller boxes for steeper images.
+                     Default values are 10 or 16.
+   HI_SCAN_HEIGHT   Pixel value above the sky value in sky RMS units that is
+                     flagged as a suspected CR.  Default=6.  Typical=5,6,7
+   LO_SCAN_HEIGHT   Pixel value above the sky value in sky RMS units that is
+                     removed if it is adjacent to a positively identified CR,
+                     provided FINE_CLEAN=1.  Default=1.5.  Typical=2,2.5,3
+   FINE_CLEAN       Set (=1) this keyword (Flag) if pixels above LO_SCAN_HEIGHT
+                     neighboring pixels identified as CRs are to be removed.
+   PHASE1_ITER      Number of iterations for Phase 1.  Should always be 2
+                     because 1 iteration tends to leave more CRs behind.
+   QPHOT            If set, quick photometry is run on stars using qphot.pro
+   NOCLEAN          If set, all objects are assumed to be stars and nothing
+                     is checked or removed.  Used in conjunction with QPHOT
+                     on an already cleaned image.
+ HISTORY:
+   02-SEP-90 Version 1.0 written by Eric W. Deutsch (EWD)
+   27-JUN-91 Version 1.1 released with several minor modifications including
+               changing the operational parameters to keywords. (EWD)
+   27-JAN-92 Version 1.2 released with the additions of changing the
+               operational parameters to keywords and adding better on-line
+               help. (EWD)
+   07-MAY-92 Version 1.21 released: proper header added and /HELP keyword
+               added.  EWD.
+   10-MAY-92 Version 1.22: Fixed "Donutting" problem and changed default
+               STAR_PSF_SENS value to .50 instead of .66 since it was removing
+               too many actual stars.  EWD.
+   24-JUL-92 Version 1.3: Better Star/CR determination algorithm added.
+               This algorithm is less Kludgy, but sometimes gives poorer
+               results than the v1.22 release.  Needs Work!  EWD.
+   08-DEC-92 Version 1.31: Tidied things up a bit, but nothing major.  EWD.
+   09-DEC-92 Version 1.32: Fixed a rather major bug in the focus pixel
+               identifier and fixed the logic for negative ratios.  This
+               now shows a major improvement!  The major task now is to add
+               a special identifier for streak CR hits.  EWD
+   04-JAN-93 Version 1.40: Changed the default sensitivity to 0.35 which
+               make IMGclean more lenient as far as stars go, but added
+               another simple-minded neighboring pixels check which catches
+               A LOT of CR's.  Basically, I say that if more than 2 of the
+               8 neighboring pixels aren't above the low scan hight, then
+               it MUST be a cosmic ray.  This now shows another big im-
+               provement in number of CR's removed as well as star removed.
+               This also does a better job at removing long streaks, but
+               an algorithm specifically for longs streaks is needful and
+               will be implemented soon.  Header updated.  Eric W. Deutsch
+   05-JAN-93 Version 1.41: Little Faster.  Fixed FITS header updating.  EWD
+   06-JAN-93   Added a few more comments and text to program header.  EWD
+   28-FEB-93 Version 1.42: Added /QPHOT and /NOCLEAN options and code so that
+               IMGclean can do some rudimentary quick aperture photometry. EWD
+;-
+;+
+ NAME:
+   IMGclean
+ PURPOSE:
+     This procedure is designed to remove cosmic ray hits (CRs) from a image,
+   specifically WFPC images.  The procedure was originally written with one
+   image in mind and was made to work well with that image.  Its effectiveness
+   for other images varies.  Often, it does an excellent job, but sometimes
+   the operational parameters must be modified (via IDL2 kerwords) to tweak
+   the performance of the software.
+     Still in a somewhat primitive state, this procedure will be improved
+   beginning June 1992.  Suggestions welcome to SCIVAX::DEUTSCH.
+ CALLING SEQEUNCE:
+   IMGclean,IMAGE,HEADER,[CR_ARRAY],[optional keywords]'
+   IMGclean,/help
+ INPUT/OUTPUT PARAMETERS:
+   IMAGE     This parameter supplies the image in which the CRs are to be
+               removed.  This image is MODIFIED!  The output cleaned image
+               is returned via this variable.
+   HEADER    This parameter is the FITS header.  The header will be modified
+               with added HISTORY detailing the procedure.
+ OPTIONAL OUTPUT:
+   CR_ARRAY  This array is a BYTE array of the same size as the input image
+               containing some information of which pixels the software
+               considered, and what descisions it made as far as CR or STAR.
+ OPTIONAL INPUT:
+   keywords  The purpose of these ketwords is described by typing
+               IMGclean,/help
+ HISTORY:
+   02-SEP-90 Version 1.0 written by Eric W. Deutsch (EWD)
+   27-JUN-91 Version 1.1 released with several minor modifications including
+               changing the operational parameters to keywords. (EWD)
+   27-JAN-92 Version 1.2 released with the additions of changing the
+               operational parameters to keywords and adding better on-line
+               help. (EWD)
+   07-MAY-92 Version 1.21 released: proper header added and /HELP keyword
+               added.  Added MOUSSE check.
+   10-MAY-92 Version 1.22: Fixed "Donutting" problem and changed default
+               STAR_PSF_SENS value to .50 instead of .66 since it was removing
+               too many actual stars.
+;-
+;+
+ NAME:
+ IMGpaste
+ PURPOSE:
+  This procedure takes a portion from SRCIMG and pastes it into DSTIMG.
+  This is originally intended for replacing a star or other goof that
+  IMGclean has made.  DIAM should usually be odd for a symmetrical
+  replacement.  If DIAM is even, the extra pixels will spill over to the
+  lower x,y pixels.
+ CALLING SEQEUNCE:
+  IMGpaste,srcimg,dstimg,xcen,ycen,diam
+ HISTORY:
+  07-JAN-93  Written by Eric W. Deutsch
+  11-FEB-93  Bug fix in DIAM determination by Eric W. Deutsch
+;-
+;+
+ IMGPUT
+
+ PURPOSE
+    Paste a small image into a larger one with edge-clipping handling
+
+ imgput,destimg,srcimg,xll,yll
+
+;-
+;+
+ NAME:
+	IMGREAD
+ PURPOSE:
+	Open an SDAS/GEIS file and read the image into a data array of 
+	appropriate type and read the header into a string array.  This 
+	procedure was designed to be more versatile than the STRD procedure 
+	and to be specifically useful to WF/PC and FOC data, as well as all 
+	other GEIS images.  IMGread supports multiple GROUPS (i.e. in STSDAS 
+	format).
+
+ CALLING SEQEUNCE:
+	IMGread,image,hdr,[filename],[groupno],[/NoAssoc,/silent,/Astrmfix]
+
+ OPTIONAL INPUT:
+	FILENAME  The filename of the HEADER file (must have extention .xxh 
+		where xx may be any two alphanumerics but usually hh.)  If 
+		there is no extention supplied, .hhh and .hhd are assumed.  If
+		this parameter is not supplied, a filename is prompted for, 
+		either with PICKFILE() if widgets are available, else by
+		text prompt.
+	GROUP - This parameter specifies the GROUP number image to read from a
+               file which contains multiple groups.  For example, for WF/PC
+               images where all four chips are contained in one file, one may
+               specify a GROUP of 0 to read PC5, 1 for PC6, 3 for PC8,
+               0 to read WF1 for a WF image, etc.  Therefore, the range of
+               GROUP is 0 to GCOUNT-1 (where GCOUNT is a header keyword.)
+ OUTPUT:
+	IMAGE - The returned array which contains the pixel information.  
+		IMAGE will be of whatever datatype the header indicates (or 
+		seems to... i.e. if BITPIX=32 but there is no DATATYPE keyword,
+               IMGread assumes REAL*4 if BZERO is 0 or non-existant and
+               INTEGER*4 if BZERO is not 0.  This is usually right, but not
+               always.)
+	H - The returned string array containing the image header 
+		information as if SXHREAD were used.
+
+ OPTIONAL KEYWORDS:
+	NoAssoc -  This keyword controls how IDL reads the file.    If NoAssoc
+		is set and non-zero then the READU function is used instead
+		of the ASSOC function.    The user can select the type of
+		read that gives the best performance on his particular setup.
+		In general, the ASSOC function seems to be faster, but is more
+		demanding on virtual memory.
+	SILENT - If this keyword is set and non-zero, then the "Loading..." 
+		message will not be printed.
+	ASTRMFIX  Controls whether the procedure AstrmFix is run.  AstrmFix
+               calculates an astrometric solution from the HST Spacecraft
+               angle in the header.  CRPIXn and CRVALn are left alone.  Only
+               CDn_n are changed.  The Default is now 0.  If you find
+		preposterous astrometry information in the header of WFPC 1
+		images, try setting this switch on.
+
+ SIDE EFFECTS:
+	For an image with group parameters, all parameters are extracted from
+	the .HHD file and values are inserted into the returned header variable.
+	To get the original header, use SXHREAD for these type of image files.
+	The EXTGRP procedure takes care of this process.
+
+ EXAMPLE:
+	Read the WF/PC file named 'w0hd0203t.c1h' into IDL variables, IM and H.
+
+	IDL> IMGREAD, im,h,'w0hd0203t.c1h'
+
+ OTHER PROCEDURES CALLED:
+	SXPAR, SXADDPAR, SXOPEN, SXHREAD, FDECOMP, WFPCREAD, PICKFILE, EXTGRP
+
+ HISTORY:
+	09-JUL-92 Header finally added to this procedure which has been in use
+	 for two or more years.  All versions and header by Eric W. Deutsch
+	01-APR-93 Made a few minor adjustments.  EWD.  (No, really)
+	July 93 Added /NoAssoc, MAKE_ARRAY, removed GET_FILE W. Landsman (HSTX)
+;-
+;+
+ NAME:
+   IMGtext
+ PURPOSE:
+   This procedure writes text onto the current graphics window.  Its
+   purpose is to provide large, nice looking text with which to annotate
+   images suitable for publication, since the Hershey Vector fonts often
+   fall short of good publication quality at large sizes.  The drawback
+   is that, since they are bitmapped fonts, only certain fonts and sizes
+   are available.  However, by using the FONTCNVT utility, more can be
+   added.
+   One column of space is automatically provided on both sides of each
+   character.  Additional space can be add with the spacing keyword.
+ CALLING SEQEUNCE:
+   IMGtext,xoffset,ybaseline,prtstring,fontname,[clearunder=]
+ INPUT:
+   XOFFSET   This is the X position where the first character is to begin.
+               The actual character starts at X+1, but the space at the
+               edge of the character begins at X.  This value is changed
+               to reflect the new position of the 'cursor' as characters
+               are written.
+   YBASELINE This is the Y position of the baseline of the font.  Note that
+               some characters of some fonts drop below the baseline.
+   PRTSTRING This is the string of characters to write (e.g. 'Hello')
+   FONTNAME  This is the string of the root filename of the font
+               (e.g. 'bold24')
+ OUTPUT:
+   XOFFSET   The returned new position of the cursor.
+ OPTIONAL KEYWORDS:
+   CLEARUNDER  This keyword governs how the letter if written to the window
+                  0  Text is written to the screen leaving the background
+                  1  The space under the text is blanked out
+                  2  One pixel all around each letter is blanked out
+                       (default value)
+   SPACING     This keyword specifies how many pixels of spacing between
+                 letter is provided.  The default=2.
+ EXAMPLE:
+   x=100
+   IMGtext,x,200,'Scale=30''''','bold16'
+ HISTORY:
+   03-NOV-1992  Version 1 Written  (E. Deutsch)
+;-
+;+
+ NAME:
+       IMGUNDER
+ PURPOSE:
+       Display image in same area as last plot.
+ CATEGORY:
+ CALLING SEQUENCE:
+       imgunder, z
+ INPUTS:
+       z = scaled byte image to display.  in
+ KEYWORD PARAMETERS:
+       Keywords:
+         /INTERP causes bilinear interpolation to be used,
+           otherwise nearest neighbor interpolation is used.
+ OUTPUTS:
+ COMMON BLOCKS:
+ NOTES:
+       Notes: Do plot,/nodata first to setup plot area,
+         then use imgunder to display image, then repeat
+         plot with data, but with /noerase.
+ MODIFICATION HISTORY:
+       R. Sterner, 15 Feb, 1991
+
+ Copyright (C) 1991, Johns Hopkins University/Applied Physics Laboratory
+ This software may be used, copied, or redistributed as long as it is not
+ sold and this copyright notice is reproduced on each copy made.  This
+ routine is provided as is without any express or implied warranties
+ whatsoever.  Other limitations apply as described in the file disclaimer.txt.
+;-
+;+
+
+ IMSCL is similar to BYTSCL except is uses a half-linear and half-logarithmic
+ scale.
+
+ Call> imscl,img-min,0,max,linearmax,top=
+ e.g.: imscl,img-300,0,10000,500,top=48
+
+ The example call produces a linear stretch of 300-500 for half of the
+ dynamic range, and a logarithmic stretch from 500-10000 for the other
+ half of the dynamic range.  This allows fine detail visible at low levels
+ without burning out stars..  top=48 works the same way as bytscl
+
+;-
+;+
+ NAME: 
+   OBJCENOM
+ PURPOSE:
+   Compute "center of mass" in a box with the specified center and radius.
+   This procedure is suited for irregular objects with multiple peaks that
+   that would normall confuse a steller centroider.
+ CALLING SEQUENCE: 
+   OBJCENOM,img,xcenter,ycenter,xcen,ycen,radius,[/INFO]
+ INPUTS:     
+   IMG      Two dimensional image array
+   XGUESS   Scalar giving X box center
+   YGUESS   Scalar giving Y box center
+   RADIUS   Scalar giving half-diameter of box within which to compute c.o.m.
+              If not suppied, the radius will be prompted for
+ OUTPUTS:   
+   XCEN     The computed X centroid position.  -1 if unable to centroid
+   YCEN     The computed Y centroid position.  -1 if unable to centroid
+        NOTE: The convention is such that the CENTER of a pixel is (n.00,n.00)
+  OPTIONAL OUTPUT KEYWORDS:
+   INFO     Return some informational parameters?
+ PROCEDURE: 
+   Extract box. determine a sky value from square annulus from radius to
+   radius+3.  computer center of mass (counts) in the box.
+   Actually, the sky is pretty irrelevant, but I do it just for fun.
+ MODIFICATION HISTORY:
+   24-JAN-94 Written by Eric Deutsch
+;-
+;+
+ QuickSplit
+
+ This program is supposed to be a real quick and dirty CR-split program
+
+ IDL> quicksplit,image1,image2,[mindiff=,ignorelev=]
+
+ image1 and image2 are the two images to be split
+ mindiff= is a keyword for the minimum difference considered to be a CR
+ ignorelev= is a keyword which specifies the level above which CR's are
+      not to be checked for. (like stars)
+ default values are 20 and 100 respectively
+
+;-
+;+
+ QuickSplit2
+
+ This program is supposed to be a real quick and dirty CR-split program
+
+ IDL> quicksplit,image1,image2,[mindiff=,ignorelev=]
+
+ image1 and image2 are the two images to be split
+ mindiff= is a keyword for the minimum difference considered to be a CR
+ ignorelev= is a keyword which specifies the level above which CR's are
+      not to be checked for. (like stars)
+ default values are 20 and 100 respectively
+
+;-
+;+
+NAME:
+      RADPROF
+PURPOSE:
+      Plot a radial profile of a (stellar) object and overplot a gaussian
+      fit.  Also prints out some fit parameters, e.g. Sky, FWHM, Max, Total.
+CALLING SEQUENCE:
+      RADPROF,image,xcen,ycen,radius,/oplot,expand=nn
+INPUTS:
+      IMAGE  - Input image
+      XCEN   - Centroid (exact!) X position of star (scalar!)
+      YCEN   - Centroid (exact!) Y position of star (scalar!)
+      RADIUS - Radius to examine (and fit) star (scalar)
+OPTIONAL INPUTS:
+      OPLOT  - Do an OPLOT instead of a PLOT
+      EXPAND - Does a cubic interpolative expansion of the object before
+                 doing the radial plot.  This has the advantage of generating
+                 more data points, but is not particularly honest.  It
+                 also doesn't gain you much, and probably should be avoided.
+OUTPUTS:
+      Plots a radial profile to graphics channel with overlay fit.
+      Prints in a row:
+        X,Y  - X,Y centroid of star (AS GIVEN!) This must be exact
+        Sky  - Sky value derived from fit.  may be too high if radius too smal
+        FWHM - Derived FWHM from fitted gaussian
+        Max  - Derived Maximum of fitted gaussian (not max pixel value!)
+        Total- Derived total volume of fitted gaussian 
+PROCEDURE:
+      Generate a plot of pixel value versus radius of the star.  Symmetrize
+      the plot and fit a gaussian using USERLIB GAUSSFIT.  Plot final fit
+      and print out some useful fitted parameters
+MODIFICATION HISTORY
+      06-JUN-94  Written by Eric W. Deutsch
+;-
+;+
+NAME:
+      RADPROF
+PURPOSE:
+      Plot a radial profile of a (stellar) object and overplot a gaussian
+      fit.  Also prints out some fit parameters, e.g. Sky, FWHM, Max, Total.
+CALLING SEQUENCE:
+      RADPROF,image,xcen,ycen,radius,/oplot,expand=nn
+INPUTS:
+      IMAGE  - Input image
+      XCEN   - Centroid (exact!) X position of star (scalar!)
+      YCEN   - Centroid (exact!) Y position of star (scalar!)
+      RADIUS - Radius to examine (and fit) star (scalar)
+OPTIONAL INPUTS:
+      OPLOT  - Do an OPLOT instead of a PLOT
+      EXPAND - Does a cubic interpolative expansion of the object before
+                 doing the radial plot.  This has the advantage of generating
+                 more data points, but is not particularly honest.  It
+                 also doesn't gain you much, and probably should be avoided.
+OUTPUTS:
+      Plots a radial profile to graphics channel with overlay fit.
+      Prints in a row:
+        X,Y  - X,Y centroid of star (AS GIVEN!) This must be exact
+        Sky  - Sky value derived from fit.  may be too high if radius too smal
+        FWHM - Derived FWHM from fitted gaussian
+        Max  - Derived Maximum of fitted gaussian (not max pixel value!)
+        Total- Derived total volume of fitted gaussian 
+PROCEDURE:
+      Generate a plot of pixel value versus radius of the star.  Symmetrize
+      the plot and fit a gaussian using USERLIB GAUSSFIT.  Plot final fit
+      and print out some useful fitted parameters
+MODIFICATION HISTORY
+      06-JUN-94  Written by Eric W. Deutsch
+;-
+;+
+ INPUTS:
+	p - your image
+	bitpix - number of bits/pixel
+	percent - percent of borders to ignore in the computation
+
+ OUTPUTS:
+	sky - estimate sky value
+	maxval - estimated upper value
+
+
+ Modified May 2, 1991 DJL  added percent parameter (which used to be hard
+		coded at 10.0%)
+
+ COMPUTE SKY
+;-
+;+
+ NAME:
+   SKYHORIZ
+
+ PURPOSE:
+   This program is designed to show how a given object (i.e. RA, DEC)
+   tracks across the sky during a specified night.  The program gives
+   two forms of output: 1) a table listing Zenith Distance, Airmass,
+   Hour Angle, UT, local time, and positions of the moon as well during
+   a specified night; and 2) a plot of how the object and the moon
+   track across the sky.  Time interval is always 6pm to 6am local time.
+
+ CALLING SEQEUNCE:
+   SkyPos
+
+ INPUT:
+   None.  All required information is prompted for.
+
+ OUTPUT:
+   A table and a plot.  See description above
+
+ EXAMPLE:
+
+ HISTORY:
+   17-FEB-94 Version 1 written by Eric W. Deutsch
+;-
+;+
+ NAME:
+   SKYPOS
+
+ PURPOSE:
+   This program is designed to show how a given object (i.e. RA, DEC)
+   tracks across the sky during a specified night.  The program gives
+   two forms of output: 1) a table listing Zenith Distance, Airmass,
+   Hour Angle, UT, local time, and positions of the moon as well during
+   a specified night; and 2) a plot of how the object and the moon
+   track across the sky.  Alternately, the data can be printed for a
+   single specified UT.
+
+ CALLING SEQEUNCE:
+   SkyPos,[/noplot]
+
+ INPUT:
+   None.  All required information is prompted for.
+
+ OUTPUT:
+   A table and a plot.  See description above
+
+ EXAMPLE:
+
+ HISTORY:
+   17-FEB-94 Version 1 written by Eric W. Deutsch
+;-
+;+
+NAME:
+      STARFIT
+PURPOSE:
+      Routine to fit a 2D gaussian to a stellar object
+CALLING SEQUENCE:
+      STARFIT,image,xguess,yguess,xc,yc,FWHM,INFO=INFO
+INPUTS:
+      IMAGE  - Input image
+      XGUESS - Estimated initial X position of star (scalar!)
+      YGUESS - Estimated initial Y position of star (scalar!)
+OUTPUTS:
+      XC     - Fit X position of star
+      YC     - Fit Y position of star
+      FWHM   - Returned FWHM of star
+PROCEDURE:
+      The IDL library routine for fitting a Gaussian to a distribution
+      is used to fit to the marginal distribution.
+MODIFICATION HISTORY
+      Modified from XSPAM to generic use by EWDeutsch Nov93
+;-
+;+
+
+ UJCHART - an example reading/plotting program for use with the UJ 1.0
+  astrometric catalog.  -Deutsch
+
+;-
+;+
+ quicky weighted average
+
+ results=wavg(array,weights,/weights)
+ or
+ results=wavg(array,errors,/errors)
+
+;-
+;+
+ NAME:
+   WFPCMRG
+ DESCRIPTION:
+   This procedure is designed to load all four chips of a WF or a PC
+   and combining them into one 16 bit INTEGER image.  The chips may
+   be trimmed or left whole.  Sky subtraction options are available.
+   This is desgined for WFPC I images only!
+ CALLING SEQUENCE:
+   wfpcmrg,infile,outfile,trim,sky,CRclean
+ INPUT PARAMETERS:
+   INFILE     The name of the input WFPC group file with HEADER extender
+   OUTFILE    The name of the output assembled file with HEADER extender
+   TRIM       Trim Method:  This flag specifies the type of trimming used:
+                0 = No Trimming
+                1 = Trimming according to parameters decided by RCB & EWD
+                    such that there is a small gap between the chips, so
+                    that no part of the image is lost. (DEFAULT)
+                2 = Trimming so that the Astrometry is fairly accurate for
+                    all 4 chips.  (NOT YET AVAILABLE)
+   SKY	       Sky/background subtraction.  The background can be subtracted
+                according to the following specifications.  The SKYCALC
+                procedure returns a median sky value and the RMS of the
+                sky level noise.  Values of SKY subtract to obatain the
+                following specifications:
+                  0 = No Sky subtraction.  Chips assembled as is. (DEFAULT)
+                  1 = Subtract SKYV+1.5*RMS which is usually about the top
+                      of the noise.
+                  2 = Subtract SKYV which is usually the middle of the
+                      sky level noise
+                  3 = Subtract SKYV-1.5*RMS which is usually about the
+                      bottom of the noise level.
+                  4 = Adjust sky level of all chips to be equal to that of
+                      chip 1 (add or subtract as necessary)
+                  5 = Use DJL routine SKY_VALUE to compute the sky and
+                      maximum value of each chip
+                  n = If SKY is greater than 5, the sky level of all chips
+ 	               will be set to this value (+ or - as necessary)
+   CRCLEAN    Set to 1 to remove Cosmic Rays.  (Default=0)
+ OUTPUT:
+   The output files: both header and data files
+   All passed variables remain unchanged
+ NOTES:
+   - Chips are never rotated during the matching.  To do the best fitting
+     job, they need to be rotated (resampled).  The current trimming
+     is 'best guess
+   - Some portions of this program were taken from a procedure called
+     MOSAIC by E. Malumuth (written 25-MAY-90.)
+ HISTORY:
+   05-JUN-90 Version 1 written by Eric W. Deutsch
+   22-JUN-90 Trimming values finalized for WF (RCB and EWD)
+   08-AUG-90 Sky subtraction, History writing, and Astrometry
+     Interpretation parts fixed and extended.  EWD.
+   09-AUG-90 Added parameters needed by DJL for his CELCO submission
+     rountines.  EWD.
+   21-SEP-90 Chips reoriented to match Press release orientation
+     (presumably correct.  Original MOSAIC was wrong...)  EWD.
+   10-DEC-92 Fixed header and tidied up a bit.  EWD.
+;-
+;+
+ NAME:
+   WHITESKY
+ PURPOSE:
+   Changes current color table to black on white.
+ CALLING SEQEUNCE:
+   WhiteSky
+ OPTIONAL INPUT KEYWORDS:
+   ALW       If set, the usual linear white to black color table is replaced
+               by an odd exponential function which approximates an
+               Apple Laster Writer density color table (i.e. if you use
+               /ALW the stretch on the screen will look more like an ALW)
+   RESERVE   string which specifies if some colors are to be reserved at
+             the top of bottom of the color table.  Current options are:
+             'RED'
+ OUTPUT:
+   Changes current color table and updates color table COMMON block.
+ HISTORY:
+   17-NOV-92 Header added to old routine  (E. Deutsch)
+   11-JAN-93 Changed name from NEG to WHITESKY  (E. Deutsch)
+   04-APR-94 Added proper handling when !d.n_colors is low.  (E. Deutsch)
+   29-MAY-94 Added /ALW keyword and handling.  (E. Deutsch)
+   29-APR-97 Added limit of !d.n_colors=256.  (E. Deutsch)
+;-

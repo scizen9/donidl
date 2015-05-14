@@ -1,0 +1,20 @@
+
+The following is a list of suggested guide stars based on the HST GSC 1.1.
+This service is currently experimental.  If you use these suggested
+guide stars, please report all successes and failures to
+deutsch@astro.washington.edu so this service may be improved and
+advertised as being more reliable.
+
+In the list(s) of stars below, the following data is provided:
+  Mag      - The GSC magnitude of the star
+  E/W Pos  - Location of the star in the E/W direction (0-10) in the
+             guider stage coordinate system
+  N/S Pos  - Location of the star in the N/S direction (0-100) in the
+             guider stage coordinate system
+
+Acquisition of stars with positions above or below the normal stage
+range may require a small offset of the telescope to acquire the object.
+For example, N/S Position=-10 would require setting the stage to 0 and
+offsetting the telescope south 2 to 4 arcmin.
+
+The E/W and N/S stage positions increase going East and North respectively.

@@ -1,0 +1,90 @@
+J/A+AS/117/467      Image of Galaxies data-base II.  (Garnier+ 1996)
+================================================================================
+An image database. II. Catalogue between {delta}=-30deg and {delta}=70deg.
+     Garnier R., Paturel G., Petit C., Marthinet M.C., Rousseau J.
+    <Astron. Astrophys. Suppl. Ser. 117, 467 (1996)>
+    =1996A&AS..117..467G   (SIMBAD/NED BibCode)
+================================================================================
+ADC_Keywords: Galaxy catalogs
+Keywords: galaxies: general - catalogue - galaxies: photometry
+
+Abstract:
+    A preliminary list of 68.040 galaxies was built from extraction of
+    35.841 digitized images of the Palomar Sky Survey (Paper I,
+    1996A&A...311...12P). For each galaxy, the basic parameters are
+    obtained: coordinates, diameter, axis ratio, total magnitude, position
+    angle. On this preliminary list, we apply severe selection rules to
+    get a catalog of 28.000 galaxies, well identified and well documented.
+    For each parameter, a comparison is made with standard measurements.
+    The accuracy of the raw photometric parameters is quite good despite
+    of the simplicity of the method. Without any local correction, the
+    standard error on the total magnitude is about 0.5 magnitude up to a
+    total magnitude of B_T_=17. Significant secondary effects are detected
+    concerning the magnitudes: distance to plate center effect and
+    air-mass effect.
+    The description of the construction of the catalog is given in Paturel
+    et al. 1996 and Garnier et al. 1996. Galaxies are detected on POS-I
+    and cross-identified with galaxies from the LEDA database
+    (http://www-obs.univ-lyon1.fr/leda/)
+
+File Summary:
+--------------------------------------------------------------------------------
+  FileName      Lrecl  Records   Explanations
+--------------------------------------------------------------------------------
+ReadMe             80        .   This file
+catalog            80    22497   The Catalogue
+--------------------------------------------------------------------------------
+
+See also:
+  VII/155 : Third Reference Catalog of Bright Galaxies (de Vaucouleurs+ 1991)
+  VII/119 : Catalogue of Principal Galaxies (PGC)   (Paturel+ 1989)
+  http://www-obs.univ-lyon1.fr/leda/ : The LEDA database
+
+Byte-by-byte Description of file: catalog
+--------------------------------------------------------------------------------
+   Bytes Format Units      Label   Explanations
+--------------------------------------------------------------------------------
+   1-  6  I6    ---        PGC     Name according to Paturel et al. (1989,
+                                     Cat. <VII/119>)
+   9- 22  A14   ---        Name    Alternate name in a hierarchy (1)
+  24- 25  I2    h          RAh     Right ascension for 1950
+  26- 27  I2    min        RAm     Right ascension for 1950
+  28- 31  F4.1  s          RAs     Right ascension for 1950
+      32  A1    ---        DE-     Declination sign
+  33- 34  I2    deg        DEd     Declination for 1950
+  35- 36  I2    arcmin     DEm     Declination for 1950
+  37- 38  I2    arcsec     DEs     Declination for 1950
+      39  A1    ---      n_Pos     [*] *: Accurate coordinates better than 10"
+  42- 45  F4.0  deg        PA      ? Position angle from North Eastwards
+  47- 49  F3.0  deg      e_PA      ? rms uncertainty on PA
+  52- 56  F5.2  mag        BT      Total B-magnitude in the RC3 system
+                                    (de Vaucouleurs et al. 1991, Cat. <VII/155>)
+  58- 60  F3.2  mag      e_BT      rms uncertainty on BT
+  63- 66  F4.2 [0.1arcmin] logD25  Decimal log of apparent diameter in the RC3
+                                    system (up to the isophote 25mag/arcsec^2^)
+  68- 70  F3.2 [0.1arcmin] e_logD25 rms uncertainty on logD25
+  73- 76  F4.2  ---        logR25  Decimal log of axis ratio
+                                    (major axis/ minor axis) in the RC3 system
+  78- 80  F3.2  ---      e_logR25  rms uncertainty on logR25
+--------------------------------------------------------------------------------
+Note (1): NGC, IC, UGC, ESO, MCG, CGCG (see Paturel et al. 1989, Cat. <VII/119>)
+--------------------------------------------------------------------------------
+
+References:
+  de Vaucouleurs G., de Vaucouleurs A., Corwin H.G. Jr, Buta R.J., Paturel G.,
+   Fouque P., 1991, Third Reference Catalog of Bright Galaxies, Springer-Verlag
+   (RC3), Cat. <VII/155>
+  Garnier R., Paturel G., Petit C., Marthinet M.C., Rousseau J.,
+                                                             1996A&AS..117..467G
+  Paturel G., Fouque P., Bottinelli L., Gouguenheim L., 1989A&AS...80..299P,
+                                                                  Cat. <VII/119>
+  Paturel G., Fouque P., Bottinelli L., Gouguenheim L., 1989b, Catalog of
+   Principal Galaxies, Monographies de la Base de Donnees Extragalactiques No1,
+   vol. 1,2,3, Observatoire de Lyon (updated version in 1996 on CD-ROM)
+  Paturel G., Garnier R., Petit C., Marthinet M.C.,          1996A&A...311...12P
+
+
+Acknowledgements: We thank G. Paturel <paturel@obs.univ-lyon1.fr>
+    for providing a copy of the catalog.
+================================================================================
+(End)                                        Patricia Bauer  [CDS]   24-Mar-1997

@@ -1,0 +1,26 @@
+--
+-- PostgreSQL database dump
+--
+
+SET client_encoding = 'UTF8';
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+SET search_path = sn, pg_catalog;
+
+--
+-- Data for Name: qualification; Type: TABLE DATA; Schema: sn; Owner: pavlyuk
+--
+
+COPY qualification (id, name, mod_date) FROM stdin;
+1	uncertain	2006-03-13 16:08:35.526816
+2	peculiar	2006-03-13 16:08:35.529917
+3	SN type is peculiar & uncertain	2006-03-13 16:08:35.531448
+4	verified	2008-06-30 15:09:00.000
+\.
+
+
+--
+-- PostgreSQL database dump complete
+--
+

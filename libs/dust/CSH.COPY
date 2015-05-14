@@ -1,0 +1,67 @@
+#!/bin/csh -f
+#------------------------------------------------------------------------------
+# D Schlegel, 31 March 1999, Princeton
+#
+# Copy IDL dust programs for software release
+#------------------------------------------------------------------------------
+set INDIR = '../djs'
+set OUTDIR = './'
+
+# Copy routines needed for DUST_GETALL
+cp $INDIR/bh/bh_rdfort.pro $OUTDIR
+cp $INDIR/coord/djs_angpos.pro $OUTDIR
+cp $INDIR/dust/dust_getval.pro $OUTDIR
+cp $INDIR/dust/fac_flux2temp.pro $OUTDIR
+cp $INDIR/dust/planckcorr.pro $OUTDIR
+cp $INDIR/dust/predict_sync.pro $OUTDIR
+cp $INDIR/dust/predict_thermal.pro $OUTDIR
+cp $INDIR/lambert/wcs_coord2pix.pro $OUTDIR
+cp $INDIR/lambert/wcs_getval.pro $OUTDIR
+cp $INDIR/math/djs_ceil.pro $OUTDIR
+cp $INDIR/math/djs_int2bin.pro $OUTDIR
+cp $INDIR/math/djs_planck.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/astro/daycnv.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/astro/get_date.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/fits/fxposit.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/fits/headfits.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/fits/mrd_hread.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/fits/sxaddpar.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/fits/sxpar.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/fits_bintable/fxaddpar.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/fits_bintable/fxhread.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/fits_bintable/fxpar.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/fits_bintable/fxparpos.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/fits_bintable/fxread.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/jhuapl/datatype.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/jhuapl/repchr.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/break_path.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/def_dirlist.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/detabify.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/expand_tilde.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/fdecomp.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/find_all_dir.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/find_with_def.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/gettok.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/host_to_ieee.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/ieee_to_host.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/mrd_skip.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/numlines.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/rdfloat.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/readcol.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/remchar.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/spec_dir.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/strnumber.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/valid_num.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/wherenan.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/where_negzero.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/misc/zparcheck.pro $OUTDIR
+cp $IDL_DIR/lib/str_sep.pro $OUTDIR
+
+# Copy routines needed for EULER and PRECESS
+cp $DAVEHOME/idl/goddard/pro/astro/euler.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/astro/precess.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/astro/adstring.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/astro/premat.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/astro/radec.pro $OUTDIR
+cp $DAVEHOME/idl/goddard/pro/astro/sixty.pro $OUTDIR
+
