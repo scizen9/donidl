@@ -411,7 +411,7 @@ if mags[isz] gt 0 and not keyword_set(silent) then $
 twomass_qa = glga_read_qa_stat(glga_dir+'2mass/fits/'+gal+'_qa.txt', $
 	stat=twomass_qa_stat)
 ;
-; NOTE: 2MASS mags are now in AB (jdn, 24-FEB-2014)
+; NOTE: GLGA 2MASS mags are now in AB (jdn, 24-FEB-2014)
 ;
 ; 2MASS J-band mag
 f=where(strcmp(master_filter.shortid,'J-2mass'))
@@ -434,8 +434,7 @@ endif
 ;
 ; Check literature if needed
 if mags[i2J] le 0. and galdat[g].J_int_mag gt 0. then begin
-	mags[i2J] = galdat[g].J_int_mag - glga_getextin(ebmv,'j',yuan13=yuan13)
-	mags[i2J] = mags[i2J] + master_filter[f].ab_offset	; Vega -> AB
+	mags[i2J] = galdat[g].J_int_mag + master_filter[f].ab_offset	; Vega -> AB
 	merrs[i2J] = galdat[g].J_int_magerr > 0.01
 	source[i2J] = 2
 endif
@@ -464,8 +463,7 @@ endif
 ;
 ; Check literature if needed
 if mags[i2H] le 0. and galdat[g].H_int_mag gt 0. then begin
-	mags[i2H] = galdat[g].H_int_mag - glga_getextin(ebmv,'h',yuan13=yuan13)
-	mags[i2H] = mags[i2H] + master_filter[f].ab_offset	; Vega -> AB
+	mags[i2H] = galdat[g].H_int_mag + master_filter[f].ab_offset	; Vega -> AB
 	merrs[i2H] = galdat[g].H_int_magerr > 0.01
 	source[i2H] = 2
 endif
@@ -494,8 +492,7 @@ endif
 ;
 ; Check literature if needed
 if mags[i2K] le 0. and galdat[g].K_int_mag gt 0. then begin
-	mags[i2K] = galdat[g].H_int_mag - glga_getextin(ebmv,'k',yuan13=yuan13)
-	mags[i2K] = mags[i2K] + master_filter[f].ab_offset	; Vega -> AB
+	mags[i2K] = galdat[g].H_int_mag + master_filter[f].ab_offset	; Vega -> AB
 	merrs[i2K] = galdat[g].K_int_magerr > 0.01
 	source[i2K] = 2
 endif
@@ -527,7 +524,7 @@ endif
 ;
 ; Check literature if needed
 if mags[iw1] le 0. and galdat[g].w1_int_mag gt 0. then begin
-	mags[iw1] = galdat[g].w1_int_mag
+	mags[iw1] = galdat[g].w1_int_mag + 2.699	; Vega -> AB
 	merrs[iw1] = galdat[g].w1_int_magerr > 0.01
 	source[iw1] = 2
 endif
@@ -555,7 +552,7 @@ endif
 ;
 ; Check literature if needed
 if mags[iw2] le 0. and galdat[g].w2_int_mag gt 0. then begin
-	mags[iw2] = galdat[g].w2_int_mag
+	mags[iw2] = galdat[g].w2_int_mag + 3.339	; Vega -> AB
 	merrs[iw2]= galdat[g].w2_int_magerr > 0.01
 	source[iw2] = 2
 endif
@@ -583,7 +580,7 @@ endif
 ;
 ; Check literature if needed
 if mags[iw3] le 0. and galdat[g].w3_int_mag gt 0. then begin
-	mags[iw3] = galdat[g].w3_int_mag
+	mags[iw3] = galdat[g].w3_int_mag + 5.174	; Vega -> AB
 	merrs[iw3] = galdat[g].w3_int_magerr > 0.01
 	source[iw3] = 2
 endif
@@ -611,7 +608,7 @@ endif
 ;
 ; Check literature if needed
 if mags[iw4] le 0. and galdat[g].w4_int_mag gt 0. then begin
-	mags[iw4] = galdat[g].w4_int_mag
+	mags[iw4] = galdat[g].w4_int_mag + 6.620	; Vega -> AB
 	mags[iw4] = galdat[g].w4_int_magerr > 0.01
 	source[iw4] = 2
 endif

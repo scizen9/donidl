@@ -106,7 +106,7 @@ for i=0L,ngal-1L do begin
 	;
 	; get host integrated magnitudes
 	;
-	; GALEX NGA mags
+	; GALEX NGA mags (already extin. corrected)
 	get_nga_phot,nhost,fuv=fmg,errfuv=fmge,nuv=nmg,errnuv=nmge,/silent
 	if fmg gt 0. then $
 		srcfmg='NGA' $
@@ -154,7 +154,7 @@ for i=0L,ngal-1L do begin
 	if vmg gt 0. then $
 		vmg = vmg - galdat[i].mwebmv * 3.315
 ;
-; try NED for GALEX mags if not in NGA
+; try NED for GALEX mags if not in NGA (already extin. corrected)
 	if fmg lt 0 then begin
 		get_ned_phot,nhost,fuv=fmg,errfuv=fmge,/silent
 		if fmg gt 0 then srcfmg = 'NED'
@@ -177,6 +177,14 @@ for i=0L,ngal-1L do begin
 		get_2mass_phot,nhost,k_t=kmg,errk_t=kmge,/silent
 		if kmg gt 0. then srckmg = 'XSC'
 	endif
+;
+; extinction correct 2MASS mags
+	if jmg gt 0. then $
+		jmg = jmg - galdat[i].mwebmv * 0.900
+	if hmg gt 0. then $
+		hmg = hmg - galdat[i].mwebmv * 0.576
+	if kmg gt 0. then $
+		kmg = kmg - galdat[i].mwebmv * 0.365
 ;
 	galdat[i].fuv_int_mag	= fmg
 	galdat[i].fuv_int_magerr= fmge
