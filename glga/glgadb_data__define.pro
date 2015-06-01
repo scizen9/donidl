@@ -19,7 +19,7 @@ pro glgadb_data__define
 ;
 ;-
 tmp = { glgadb_data, $
-	id:'', type:'-', $
+	id:'', type:'-', pgc:-9ll, $
 	ra:-9.d0, dec:-99.d0, majax:-9., minax:-9., pa:-9., $
 	timestamp:0ll, catalog:'', new_ell:0ll, dss_img:0ll, $
 	fuv_img:0ll, nuv_img:0ll, $			; GALEX
