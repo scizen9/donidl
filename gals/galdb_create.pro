@@ -24,6 +24,7 @@ galdat=replicate(A,ngal)
 ;
 ; ids
 galdat.id = hldata.objname
+galdat.pgc= hldata.pgc
 ;
 ; types
 galdat.type = hldata.type

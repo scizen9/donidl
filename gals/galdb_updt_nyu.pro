@@ -1,7 +1,6 @@
 pro galdb_updt_nyu,i,silent=silent,verbose=verbose,sdss=sdss
 ;+
-;	gather all the galaxy data into a master structure
-;	start with the Hyper LEDA sample
+;	update galdat structure from NYU value-added catalog
 ;-
 ; common variable for galdat
 COMMON galdb_info, galdat, gphsrc

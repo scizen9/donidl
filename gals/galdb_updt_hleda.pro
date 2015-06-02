@@ -1,6 +1,6 @@
 pro galdb_updt_hleda,silent=silent,verbose=verbose
 ;+
-;	update Hyper LEDA data
+;	update galdat struct from Hyper LEDA data
 ;-
 ; common variable for galdat
 COMMON galdb_info, galdat, gphsrc
@@ -78,6 +78,7 @@ for i=0,ngal-1 do begin
 	galdat[i].hlind = m
 	if m ge 0 then begin
 		galdat[i].hlname = hldata[m].objname
+		galdat[i].pgc = hldata[m].pgc
 		galdat[i].hltype = hldata[m].type
 		galdat[i].hltyn = hldata[m].t
 		galdat[i].hlneighbor = hlnb

@@ -1,7 +1,6 @@
 pro galdb_updt_prieto08,i,silent=silent,verbose=verbose,prdat=prdat
 ;+
-;	gather all the galaxy data into a master structure
-;	start with the Hyper LEDA sample
+;	update galdat struct from Prieto 2008
 ;-
 ; common variable for galdat
 COMMON galdb_info, galdat, gphsrc

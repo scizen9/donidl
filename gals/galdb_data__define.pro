@@ -10,7 +10,7 @@ pro galdb_data__define
 ;
 ;-
 tmp = { galdb_data, $
-	id:'', altids:'', $		; IDs (alts are comma sep list)
+	id:'', altids:'', pgc:-9ll, $	; IDs (alts are comma sep list)
 	sample:'', $			; list of sample names (comma sep)
 	sne:'', $			; list of SNe (comma sep, if any)
 	ra:-9.d0, dec:-99.d0, coo_src:'', $	; coords (J2000)

@@ -27,10 +27,6 @@ glgarec = struct_init(A)
 glgarec.id = id
 ddeg = degdir
 ;
-; check for PGC
-if strpos(id,'PGC') ge 0 then $
-	glgarec.pgc = long(strmid(id,3))
-;
 ; check gals database
 h=gfind(id,count=ng,/silent)
 ;
@@ -45,15 +41,7 @@ if ng gt 0 then begin
 	glgarec.majax	= galdat[h].majax
 	glgarec.minax	= galdat[h].minax
 	glgarec.pa	= galdat[h].pa
-; extract PGC if not already known from ID
-	if glgarec.pgc lt 0 then begin
-	    if strpos(galdat[h].altids,'PGC') ge 0 then begin
-		pstr = strmid(galdat[h].altids, $
-				strpos(galdat[h].altids,'PGC') + 3)
-		pgc = long(gettok(pstr,'|'))
-		glgarec.pgc = pgc
-	    endif
-	endif
+	glgarec.pgc     = galdat[h].pgc
 ; catalog
 	if glgarec.majax ge 90. then begin
 		glgarec.catalog='glga_v1'
@@ -64,6 +52,10 @@ if ng gt 0 then begin
 ; not in database
 endif else begin
 	glgarec.catalog	= 'extra'
+	;
+	; check PGC
+	get_ned,glgarec.id,pgc=pgc,/silent
+	if pgc ge 0 then glgarec.pgc = pgc
 	;
 	; check ellipsepar files for basic params
 	eflist = file_search(ddeg+'photometry/'+id+ $

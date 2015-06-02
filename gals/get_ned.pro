@@ -1,4 +1,4 @@
-pro get_ned,obj,radeg=radeg,decdeg=decdeg,rasex=rasex,decsex=decsex,$
+pro get_ned,obj,radeg=radeg,decdeg=decdeg,rasex=rasex,decsex=decsex,pgc=pgc, $
 	galldeg=galldeg,galbdeg=galbdeg,rvhel=rvhel,rverr=rverr,z=z,errz=errz,$
 	majdim=majdim,mindim=mindim,mag=mag,filt=filt,class=class,$
 	vgal=vgal,vlg=vlg,v3k=v3k,dgal=dgal,dlg=dlg,d3k=d3k,$
@@ -79,6 +79,18 @@ if nf eq 1 then begin
 		if prt then print,'Galactic coords not found'
 		galldeg = -9.
 		galbdeg = -99.
+	endelse
+;
+; PGC number
+	t=where(strpos(page,'>PGC<') ge 0, n)
+	if n gt 0 then begin
+		rec=page(t(0))
+		pstr=strmid(rec,strpos(rec,'>PGC<')+8)
+		val=gettok(pstr,' ')
+		pgc = long(val)
+	endif else begin
+		if prt then print,'PGC number not found'
+		pgc = -9ll
 	endelse
 ;
 ; Helio. Radial Velocity

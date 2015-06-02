@@ -1,7 +1,6 @@
 pro galdb_updt_pubdat,i,silent=silent,verbose=verbose,sdss=sdss
 ;+
-;	gather all the galaxy data into a master structure
-;	start with the Hyper LEDA sample
+;	update published data from NED
 ;-
 ; common variable for galdat
 COMMON galdb_info, galdat, gphsrc
@@ -51,7 +50,7 @@ if nra ge 0 and ndec ge -90 then begin
 endif
 ;
 ; basic data
-get_ned,nhost,rvhel=rv,majdim=majax,mindim=minax,class=type,/silent
+get_ned,nhost,rvhel=rv,majdim=majax,mindim=minax,class=type,pgc=pgc,/silent
 if rv lt -900. or majax lt 0. or minax lt 0. or strlen(type) le 0 then $
 	get_ned,nhost,rvhel=rv,majdim=majax,mindim=minax,class=type, $
 		/silent, /reread
@@ -59,6 +58,7 @@ galdat[i].majax = majax * 60.
 galdat[i].minax = minax * 60.
 galdat[i].type = type
 galdat[i].cz = rv
+if galdat[i].pgc le 0 then galdat[i].pgc = pgc
 ;
 ; get linear scale at galaxy
 lumd = -9. & dmpc = -9.
@@ -167,6 +167,14 @@ if kmg lt 0. then begin
 	get_2mass_phot,nhost,k_t=kmg,errk_t=kmge,/silent
 	if kmg gt 0. then srckmg = 'XSC'
 endif
+;
+; extinction correct 2MASS mags
+if jmg gt 0. then $
+	jmg = jmg - galdat[i].mwebmv * 0.900
+if hmg gt 0. then $
+	hmg = hmg - galdat[i].mwebmv * 0.576
+if kmg gt 0. then $
+	kmg = kmg - galdat[i].mwebmv * 0.365
 ;
 galdat[i].fuv_int_mag	= fmg
 galdat[i].fuv_int_magerr= fmge
