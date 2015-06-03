@@ -54,7 +54,7 @@ endif else begin
 	glgarec.catalog	= 'extra'
 	;
 	; check PGC
-	get_ned,glgarec.id,pgc=pgc,/silent
+	get_ned,get_hl_name(glgarec.id),pgc=pgc,/silent
 	if pgc ge 0 then glgarec.pgc = pgc
 	;
 	; check ellipsepar files for basic params

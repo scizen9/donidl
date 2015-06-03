@@ -49,7 +49,7 @@ endif else if strcmp(cat,'ARP') then begin
 	else	tl =''
 	n1=long(strmid(host,p))
 	onm=cat+string(n1,form='(i03)')+tl
-endif else if strcmp(cat,'PGC') then begin
+endif else if strcmp(cat,'PGC') or strcmp(cat,'LEDA') then begin
 	n1=long(strmid(host,p))
 	if n1 le 999999L then $
 		fmt = '(i06)' $

@@ -28,10 +28,10 @@ read_filter_file
 vega_struct=read_vega(/fullwave)
 calc_zps,vega_struct
 ;
-defsysv,'!SNE_DATA','/'+udir+'/'+unam+'/idl/data/sne/'
+defsysv,'!SNE_DATA','/'+udir+'/'+unam+'/Data/sne/'
 defsysv,'!GALS_DATA','/'+udir+'/'+unam+'/Data/gals/'
-defsysv,'!CAT_DATA','/'+udir+'/'+unam+'/idl/data/cats/'
-defsysv,'!NED_DATA','/'+udir+'/'+unam+'/idl/data/ned/'
+defsysv,'!CAT_DATA','/'+udir+'/'+unam+'/donidl/data/cats/'
+defsysv,'!NED_DATA','/'+udir+'/'+unam+'/donidl/data/ned/'
 defsysv,'!NED_CACHE','/'+udir+'/'+unam+'/ref/ned/'
 defsysv,'!NGA_DATA','/'+udir+'/'+unam+'/Data/nga/'
 defsysv,'!2MASS_DATA','/'+udir+'/'+unam+'/Data/2mass/'
@@ -45,7 +45,6 @@ defsysv,'!GLGA_SDSS_DATA','/home/ymir/neill/sdss/'
 defsysv,'!GLGA_2MASS_DATA','/disk/nagelfar2/neill/2mass/'
 defsysv,'!GLGA_ROOT','/'+udir+'/'+unam+'/glga/'
 defsysv,'!GLGA_MS_ROOT','/'+sdir+'/mseibert/glga/'
-;defsysv,'!GLGA_ROOT','/'+sdir+'/mseibert/glga/'
 defsysv,'!ZPEG_ROOT','/'+udir+'/'+unam+'/zpeg_5.17/'
 ;
 ; KCWI system variables

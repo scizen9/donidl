@@ -24,7 +24,8 @@ endif else if strcmp(cat,'IC') or $
 	n1=fix(strmid(host,p))
 	onm=cat+string(n1,form='(i04)')+tl
 endif else if strcmp(cat,'PGC') or $
-	      strcmp(cat,'UGC') then begin
+	      strcmp(cat,'UGC') or $
+	      strcmp(cat,'LEDA') then begin
 	n1=long(strmid(host,p))
 	if n1 le 99999L then $
 		fmt = '(i05)' $
@@ -32,9 +33,6 @@ endif else if strcmp(cat,'PGC') or $
 		fmt = '(i06)' $
 	else	fmt = '(i07)'
 	onm=cat+string(n1,form=fmt)
-endif else if strcmp(cat,'LEDA') then begin
-	n1=long(strmid(host,p))
-	onm=cat+string(n1,form='(i06)')
 endif
 ;
 ; check for NGA entry

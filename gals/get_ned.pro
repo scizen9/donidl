@@ -31,14 +31,14 @@ flist=file_search(nedir+'/'+obj+'.html',count=nf)
 if nf eq 1 then begin
 ;
 ; read in file
-	openr,il,flist(0),/get_lun
+	openr,il,flist[0],/get_lun
 	rec=''
 	page=''
 	while not eof(il) do begin
 		readf,il,rec
 		page=[page,rec]
 	endwhile
-	page=page(1:*)
+	page=page[1:*]
 	free_lun,il
 ;
 ; check output
@@ -55,7 +55,7 @@ if nf eq 1 then begin
 ; RA,DEC
 	t=where(strpos(page,'Equatorial (J2000.0)') ge 0,n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,2 do val=gettok(rec,' ')
 		radeg = double(val)
 		val=gettok(rec,' ')
@@ -71,7 +71,7 @@ if nf eq 1 then begin
 ; Galactic l,b
 	t=where(strpos(page,'Galactic     ') ge 0, n)
 	if n gt 0 then begin
-		rec=page(t(0))
+		rec=page[t[0]]
 		for i=0,1 do val=gettok(rec,' ')
 		galldeg = double(val)
 		galbdeg = double(gettok(rec,' '))
@@ -84,19 +84,38 @@ if nf eq 1 then begin
 ; PGC number
 	t=where(strpos(page,'>PGC<') ge 0, n)
 	if n gt 0 then begin
-		rec=page(t(0))
+		rec=page[t[0]]
 		pstr=strmid(rec,strpos(rec,'>PGC<')+8)
 		val=gettok(pstr,' ')
 		pgc = long(val)
 	endif else begin
-		if prt then print,'PGC number not found'
-		pgc = -9ll
+		;
+		; check LEDA number
+		t=where(strpos(page,'>LEDA<') ge 0, n)
+		if n gt 0 then begin
+			rec=page[t[0]]
+			pstr=strmid(rec,strpos(rec,'>LEDA<')+9)
+			val=gettok(pstr,' ')
+			pgc = long(val)
+		endif else begin
+			;
+			; check pgc in filename
+			if strpos(obj,'PGC') ge 0 or $
+			   strpos(obj,'LEDA') ge 0 then begin
+				if strpos(obj,'PGC') ge 0 then $
+					pgc = long(strmid(obj,3)) $
+				else	pgc = long(strmid(obj,4))
+			endif else begin
+				if prt then print,'PGC number not found'
+				pgc = -9ll
+			endelse
+		endelse
 	endelse
 ;
 ; Helio. Radial Velocity
 	t=where(strpos(page,'Helio. Radial Velocity') ge 0, n)
 	if n gt 0 then begin
-		rec=page(t(0))
+		rec=page[t[0]]
 		for i=0,4 do val=gettok(rec,' ')
 		if not valid_num(val,rvhel) then $
 			rvhel = -9999.9
@@ -112,7 +131,7 @@ if nf eq 1 then begin
 ; Redshift
 	t=where(strpos(page,'Redshift       ') ge 0, n)
 	if n gt 0 then begin
-		rec=page(t(0))
+		rec=page[t[0]]
 		for i=0,2 do val=gettok(rec,' ')
 		if not valid_num(val,z) then $
 			z=-99.
@@ -128,7 +147,7 @@ if nf eq 1 then begin
 ; Major Diameter
 	t=where(strpos(page,'Major Diameter') ge 0, n)
 	if n gt 0 then begin
-		rec=page(t(0))
+		rec=page[t[0]]
 		for i=0,4 do val=gettok(rec,' ')
 		if not valid_num(val,majdim) then $
 			majdim=-9.
@@ -140,7 +159,7 @@ if nf eq 1 then begin
 ; Minor Diameter
 	t=where(strpos(page,'Minor Diameter') ge 0, n)
 	if n gt 0 then begin
-		rec=page(t(0))
+		rec=page[t[0]]
 		for i=0,4 do val=gettok(rec,' ')
 		if not valid_num(val,mindim) then $
 			mindim=-9.
@@ -152,7 +171,7 @@ if nf eq 1 then begin
 ; Magnitude and Filter
 	t=where(strpos(page,'Magnitude and Filter') ge 0, n)
 	if n gt 0 then begin
-		rec=page(t(0))
+		rec=page[t[0]]
 		for i=0,4 do val=gettok(rec,' ')
 		if not valid_num(val,mag) then $
 			mag=-99.
@@ -166,7 +185,7 @@ if nf eq 1 then begin
 ; Classifications
 	t=where(strpos(page,'Classifications  ') ge 0, n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,1 do val=gettok(rec,' ')
 		rec=strtrim(strcompress(rec),2)
 		while strpos(rec,' ') ge 0 do strput,rec,';',strpos(rec,' ')
@@ -181,7 +200,7 @@ if nf eq 1 then begin
 ; V (Galactocentric GSR)
 	t=where(strpos(page,'V (Galactocentric GSR)') ge 0, n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,4 do val=gettok(rec,' ')
 		if not valid_num(val,vgal) then $
 			vgal=-9.
@@ -193,7 +212,7 @@ if nf eq 1 then begin
 ; V (Local Group)
 	t=where(strpos(page,'V (Local Group)') ge 0, n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,4 do val=gettok(rec,' ')
 		if not valid_num(val,vlg) then $
 			vlg=-9.
@@ -205,7 +224,7 @@ if nf eq 1 then begin
 ; V (3K CMB)
 	t=where(strpos(page,'V (3K CMB)') ge 0, n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,4 do val=gettok(rec,' ')
 		if not valid_num(val,v3k) then $
 			v3k=-9.
@@ -217,7 +236,7 @@ if nf eq 1 then begin
 ; D (Galactocentric GSR)
 	t=where(strpos(page,'D (Galactocentric GSR)') ge 0, n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,4 do val=gettok(rec,' ')
 		if not valid_num(val,dgal) then $
 			dgal=-9.
@@ -229,7 +248,7 @@ if nf eq 1 then begin
 ; D (Local Group)
 	t=where(strpos(page,'D (Local Group)') ge 0, n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,4 do val=gettok(rec,' ')
 		if not valid_num(val,dlg) then $
 			dlg=-9.
@@ -241,7 +260,7 @@ if nf eq 1 then begin
 ; D (3K CMB)
 	t=where(strpos(page,'D (3K CMB)') ge 0, n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,4 do val=gettok(rec,' ')
 		if not valid_num(val,d3k) then $
 			d3k=-9.
@@ -253,7 +272,7 @@ if nf eq 1 then begin
 ; Angular-Size Distance
 	t=where(strpos(page,'Angular-Size Distance') ge 0,n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,3 do val=gettok(rec,' ')
 		if not valid_num(val,cosangd) then $
 			cosangd=-1.
@@ -269,7 +288,7 @@ if nf eq 1 then begin
 ; Luminosity Distance
 	t=where(strpos(page,'Luminosity Distance') ge 0,n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,3 do val=gettok(rec,' ')
 		if not valid_num(val,coslumd) then $
 			coslumd=-1.
@@ -285,7 +304,7 @@ if nf eq 1 then begin
 ; Scale
 	t=where(strpos(page,'Scale (Cosmology Corrected)') ge 0,n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,3 do val=gettok(rec,' ')
 		if not valid_num(val,cosscl) then $
 			cosscl=-1.
@@ -322,7 +341,7 @@ if nf eq 1 then begin
 ; Galactic Extinction (Burstein & Heiles)
 	t=where(strpos(page,'Burstein & Heiles') ge 0, n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		rec = strmid(rec,strpos(rec,'A_B'))
 		for i=0,2 do val=gettok(rec,' ')
 		if not valid_num(val,mwextbh) then $
@@ -335,7 +354,7 @@ if nf eq 1 then begin
 ; Galactic Extinction (Schlegel et al.)
 	t=where(strpos(page,'(Schlegel et al.)') ge 0, n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		rec = strmid(rec,strpos(rec,'A_B'))
 		for i=0,2 do val=gettok(rec,' ')
 		if not valid_num(val,mwextsch) then $
@@ -348,7 +367,7 @@ if nf eq 1 then begin
 ; Color excess
 	t=where(strpos(page,' E(B-V) ') ge 0, n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,2 do val=gettok(rec,' ')
 		if not valid_num(val,mwebmv) then $
 			mwebmv = -99.
@@ -361,7 +380,7 @@ if nf eq 1 then begin
 	if keyword_set(mwband) and n_elements(mwband) gt 0 then begin
 		t=where(strpos(page,'Bandpass   ') ge 0, n)
 		if n gt 0 then begin
-			rec = page(t(0))
+			rec = page[t[0]]
 			bp = gettok(rec,' ')
 			p=0
 			while strlen(rec) gt 0 do begin

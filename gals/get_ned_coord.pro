@@ -25,7 +25,7 @@ flist=file_search(fspec,count=nf)
 if nf eq 1 then begin
 ;
 ; read in file
-	openr,il,flist(0),/get_lun
+	openr,il,flist[0],/get_lun
 	rec=''
 	page=''
 	while not eof(il) do begin
@@ -38,7 +38,7 @@ if nf eq 1 then begin
 	if n_elements(page) lt 2 then begin
 		print,obj+' file error, recommend using /reread.'
 		page=['']
-	endif else page=page(1:*)
+	endif else page=page[1:*]
 ;
 	t=where(strpos(page,'not currently recognized') ge 0, n)
 	if n gt 0 then begin
@@ -53,7 +53,7 @@ if nf eq 1 then begin
 ; Equatorial (B1950.0)
 	t=where(strpos(page,'Equatorial (B1950.0)') ge 0,n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,1 do val=gettok(rec,' ')
 		eq_ra_b = double(gettok(rec,' '))
 		eq_dec_b= double(gettok(rec,' '))
@@ -66,7 +66,7 @@ if nf eq 1 then begin
 ; Equatorial (J2000.0)
 	t=where(strpos(page,'Equatorial (J2000.0)') ge 0,n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,1 do val=gettok(rec,' ')
 		eq_ra_j = double(gettok(rec,' '))
 		eq_dec_j= double(gettok(rec,' '))
@@ -79,7 +79,7 @@ if nf eq 1 then begin
 ; Ecliptic (B1950.0)
 	t=where(strpos(page,'Ecliptic   (B1950.0)') ge 0,n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,1 do val=gettok(rec,' ')
 		ec_lon_b = double(gettok(rec,' '))
 		ec_lat_b = double(gettok(rec,' '))
@@ -92,7 +92,7 @@ if nf eq 1 then begin
 ; Ecliptic (J2000.0)
 	t=where(strpos(page,'Ecliptic   (J2000.0)') ge 0,n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		for i=0,1 do val=gettok(rec,' ')
 		ec_lon_j = double(gettok(rec,' '))
 		ec_lat_j = double(gettok(rec,' '))
@@ -105,7 +105,7 @@ if nf eq 1 then begin
 ; Galactic
 	t=where(strpos(page,'Galactic              ') ge 0,n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		val=gettok(rec,' ')
 		gl_lon = double(gettok(rec,' '))
 		gl_lat = double(gettok(rec,' '))
@@ -118,7 +118,7 @@ if nf eq 1 then begin
 ; SuperGalactic
 	t=where(strpos(page,'SuperGalactic         ') ge 0,n)
 	if n gt 0 then begin
-		rec = page(t(0))
+		rec = page[t[0]]
 		val=gettok(rec,' ')
 		sg_lon = double(gettok(rec,' '))
 		sg_lat = double(gettok(rec,' '))
