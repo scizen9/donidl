@@ -165,6 +165,12 @@ if keyword_set(outdir) then $
 	odir = outdir + '/' $
 else	odir = plotpath
 
+; output file
+jname=odir+host+'_'+snnm+'_'+srvy+'.jpg'
+if file_test(jname) and not keyword_set(update) then begin
+	if verb then print,'| Already exists : '+jname
+	return
+endif
 ;-----------------------------------------------------
 
 bfile = ddir + host + '_' + bands[0] + '.fit*'
@@ -181,25 +187,34 @@ if be or re or gg then begin  ; if fits files exists
 
   if be then  begin
     blue = mrdfits(bfile,0,bh,/fscale,/silent)
-    mmm,blue[where(blue gt 0)],sky,sig
-    if sig le 0. then $
-	    sky,blue[where(blue gt 0)],sky,sig
+    good = where(blue gt 0, ngood)
+    if ngood gt 0 then begin
+    	mmm,blue[good],sky,sig
+    	if sig le 0. then $
+	    sky,blue[good],sky,sig
+    endif else sky = 0.
     blue = (blue - sky) + offset
     hdr = bh
   endif
   if gg then  begin
     green  = mrdfits(gfile,0,gh,/fscale,/silent)
-    mmm,green[where(green gt 0)],sky,sig
-    if sig le 0. then $
-	    sky,green[where(green gt 0)],sky,sig
+    good = where(green gt 0, ngood)
+    if ngood gt 0 then begin
+    	mmm,green[good],sky,sig
+    	if sig le 0. then $
+	    sky,green[good],sky,sig
+    endif else sky = 0.
     green = (green - sky) + offset
     hdr = gh
   endif
   if re then  begin
     red  = mrdfits(rfile,0,rh,/fscale,/silent)
-    mmm,red[where(red gt 0)],sky,sig
-    if sig le 0. then $
-	    sky,red[where(red gt 0)],sky,sig
+    good = where(red gt 0, ngood)
+    if ngood gt 0 then begin
+    	mmm,red[good],sky,sig
+    	if sig le 0. then $
+	    sky,red[good],sky,sig
+    endif else sky = 0.
     red = (red - sky) + offset
     hdr = rh
   endif
@@ -443,12 +458,8 @@ if be or re or gg then begin  ; if fits files exists
   ;------------------------------------
   ; write jpg file
 
-  jname=odir+host+'_'+snnm+'_'+srvy+'.jpg'
-  if not file_test(jname) or keyword_set(update) then begin
-  	write_jpeg,jname,image,true=3,quality=quality
-  	if verb then print, '| Wrote : '+jname
-  endif else $
-	if verb then print,'| Already exists : '+jname
+  write_jpeg,jname,image,true=3,quality=quality
+  if verb then print, '| Wrote : '+jname
 
 endif else if verb then begin
   print,'| Cannot find files :'
