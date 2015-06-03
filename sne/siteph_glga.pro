@@ -55,8 +55,13 @@ printf,pl,'# SN        host                       Nx(Frac      df   dferr)'
 ; set up filter list
 nflts = n_elements(flts)
 ;
+; AB conversion from Table 3 in Section IV.3.h.i.3 of
+; WISE All-Sky Release Explanatory Suppl.
+; http://wise2.ipac.caltech.edu/docs/release/allsky/expsup/sec4_4h.html#conv2ab
+aboff=[2.699, 3.339, 5.174, 6.620]
+;
 ; AB conversion from Table 5 in Section IV.3.g.v of WISE Explanatory Suppl.
-aboff=[2.683, 3.319, 5.242, 6.604]
+; aboff=[2.683, 3.319, 5.242, 6.604] (OBSOLETE)
 ;
 ; loop over sne
 nsn = n_elements(sndat)
