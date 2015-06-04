@@ -22,7 +22,7 @@ defsysv,'!COSMO_OL',0.73	; Omega Lambda
 defsysv,'!COSMO_H0',73.0	; Hubble constant
 
 ; photometry setups
-defsysv,'!PHOT_DATA','/'+udir+'/'+unam+'/idl/data/kcorr/'
+defsysv,'!PHOT_DATA','/'+udir+'/'+unam+'/donidl/data/kcorr/'
 COMMON filter_info,master_filter
 read_filter_file
 vega_struct=read_vega(/fullwave)
@@ -38,7 +38,6 @@ defsysv,'!2MASS_DATA','/'+udir+'/'+unam+'/Data/2mass/'
 defsysv,'!SDSS_DATA','/'+udir+'/'+unam+'/Data/sdss/'
 defsysv,'!WISE_DATA','/'+udir+'/'+unam+'/Data/wise/'
 defsysv,'!GALEX_DATA','/'+udir+'/'+unam+'/Data/galex/'
-;defsysv,'!GALDB_DATA','/'+udir+'/'+unam+'/idl/data/galdb/'
 defsysv,'!GLGA_DATA','/'+udir+'/'+unam+'/Data/glga/'
 defsysv,'!GLGA_WISE_DATA','/Volumes/scidata/'+unam+'/wise/'
 defsysv,'!GLGA_SDSS_DATA','/home/ymir/neill/sdss/'
