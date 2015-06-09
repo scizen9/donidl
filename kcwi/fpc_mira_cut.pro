@@ -1,4 +1,3 @@
-; $Id$
 ; KCWI utility routine
 pro fpc_mira_cut,imf,pxscl,xc,yc,fpcbin=fpcbin,pmfm=pmfm,rotpposn=rotpposn
 ;+
