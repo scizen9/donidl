@@ -15,7 +15,7 @@ endif else mxrat = t(0)
 tlb = strupcase(fld) + ' '+set+type
 plot,prob,xtitle='Nova Rate (yr!E-1!N)',ytitle='Probability(%)',ythick=3, $
 	charsiz=2, xthick=3,charthick=3,thick=3,title=tlb, $
-	xran=[-1,max(rats)+1],xsty=1,yrange=[-1,min([max(prob)+1,100])],ysty=1
+	xran=[-1,max(rats)+1],xsty=1,yrange=[-0.5,min([max(prob)+1,100])],ysty=1
 ;
 oplot,[mxrat,mxrat],[0,mxprb],linesty=2
 ;
@@ -37,12 +37,8 @@ oplot,[ssrats(t(0)),ssrats(t(n-1))],[sprob(psprb),sprob(psprb)]
 up = string(ssrats(t(n-1))-mxrat,form='(f4.1)')
 down = string(mxrat-ssrats(t(0)),form='(f4.1)')
 ;
-x = !x.crange(0) + 3.5/7. * ( !x.crange(1) - !x.crange(0) )
-y = !y.crange(0) + 6./7. * ( !y.crange(1) - !y.crange(0) )
-xyouts,x,y,'<R> = '+strn(mxrat)+'!S!E+'+up+ $
-	'!R!I-'+down+'!N yr!E-1!N', charsi=2.5,charthi=3
-y = !y.crange(0) + 5.2/7. * ( !y.crange(1) - !y.crange(0) )
-xyouts,x,y,strn(ntr)+' Trials',charsi=2.5,charthi=3
+legend,['<R> = '+strn(mxrat)+'!S!E+'+up+'!R!I-'+down+'!N yr!E-1!N', $
+	strn(ntr)+' Trials'],box=0,charsi=2.5,charthi=3,spacing=3
 ;
 print,'<R> = '+strn(mxrat)+' +'+up+' -'+down
 ;

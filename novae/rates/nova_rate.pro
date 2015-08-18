@@ -1,16 +1,35 @@
-pro nova_rate,dmod,ntrials,trate,logfile=logfile
+pro nova_rate,dmod,ntrials,trate,inputfile=inputfile,logfile=logfile
+;+
+;	nova_rate - calculate nova rate given frame limits and observed rate
 ;
+; INPUTS:
+;	dmod	- distance modulus of galaxy observed
+;	ntrials	- number of monte carlo trials to make (> 1000)
+;	trate	- observed nova rate (number of nova actually observed)
 ;
+; KEYWORDS:
+;	inputfile - a list of frame limits for each epoch with one line per
+;			epoch in the following format:
+;				<julianDate> <LimitingMag> <LimitingMagErr>
+;	logfile - a file in which to log the results
+;
+;-
 if n_params(0) lt 3 then begin
-	print,'Usage: - nova_rate, dist_mod, ntrials, true_rate, logfile=logfile'
+	print,'Usage: - nova_rate, dist_mod, ntrials, true_rate, inputfile=inputfile, logfile=logfile'
 	return
 endif
 ;
+; check inputs
+if keyword_set(inputfile) then $
+	ifil = inputfile $
+else	ifil = 'flims.dat'
+;
+; get field
 field=''
 read,'Field ID: ',field
 ;
+readcol,ifil,ljd,lmg,lme,format='d,f,f'
 ratelim=100
-rdfrmlims,'flims.dat',ljd,lmg,lme
 ljd = fix(ljd - min(ljd))
 nsam = n_elements(ljd)
 ;
@@ -88,7 +107,7 @@ endif else begin
     matches = (matches / float(ntrials)) * 100.
     plot,matches,xtitle='Nova Rate',ytitle='Probability(%)',ythick=3,charsiz=2,$
 	xthick=3,charthick=3,thick=3,title=field,xran=[-1,rate+1],xsty=1,$
-	yran=[-1,min([max(matches)+1,100])],ysty=1
+	yran=[-0.5,min([max(matches)+1,100])],ysty=1
 endelse
 ;
 return
