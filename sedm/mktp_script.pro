@@ -12,7 +12,8 @@ for i=0,nf-1 do begin
 	ra = sxpar(h,'RA')
 	dec = sxpar(h,'DEC')
 	printf,ol,"solve-field --ra '"+ra+"' --dec '"+dec+ $
-		"' --radius 0.2 "+flist[i]
+		"' --radius 0.2 --scale-units arcsecperpix " + $
+		"--scale-low 0.375 --scale-high 0.425 --cpulimit 5 " + flist[i]
 endfor
 free_lun,ol
 return
