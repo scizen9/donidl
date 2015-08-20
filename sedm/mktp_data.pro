@@ -1,6 +1,6 @@
 pro mktp_data
 ;+
-; make a script to get data
+; extract solution results data
 ;-
 flist = file_search('rc*.solved', count=nf)
 ;
