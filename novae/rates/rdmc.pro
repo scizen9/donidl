@@ -20,7 +20,7 @@ endif
 if n_params(0) gt 6 then $
 	type = rec
 ;
-maxrd = 200
+maxrd = 500
 rates = intarr(maxrd)
 matches = lonarr(maxrd)
 irate = 0
