@@ -13,9 +13,22 @@ pro wise_atlas_driver,lfile,pxscl=pxscl,nolimit=nolimit, $
 ; get list
 readcol,lfile,names,sra,sdec,majdiam,mindiam,pa, $
 	format='a,d,d,f,f,f'
+nobj = n_elements(sra)
+name = strtrim(id,2)
 ;
-; 3 arcmin, is minimum size
-sz=(majdiam*4.0)>3.
+; check size limit
+;
+; 3 arcmin is minimum size
+r=((majdiam*4.)>3.) / 60.
+sz = (majdiam * 4.0)>3.
+bg = where(majdiam ge 50., nbg)
+if nbg gt 0 then sz[bg] = majdiam[bg] * 1.5
+bg = where(majdiam lt 50. and majdiam ge 30., nbg)
+if nbg gt 0 then sz[bg] = majdiam[bg] * 2.0
+bg = where(majdiam lt 30 and majdiam ge 20., nbg)
+if nbg gt 0 then sz[bg] = majdiam[bg] * 2.5
+bg = where(majdiam lt 20 and majdiam ge 10., nbg)
+if nbg gt 0 then sz[bg] = majdiam[bg] * 3.0
 ;
 ; list of spectral bands
 band=['w1','w2','w3','w4']
@@ -31,8 +44,8 @@ print,'Using pixel scale ("/px) of ',psc
 root = !GLGA_WISE_DATA + 'data/sort/'
 ;
 ; loop over hosts
-ng=n_elements(names)
-for ig=0,ng-1 do begin
+nobj=n_elements(names)
+for ig=0,nobj-1 do begin
     ;
     ; current coordinates
     ra=sra[ig]
@@ -55,7 +68,7 @@ for ig=0,ng-1 do begin
 	if file_test('*-int-3.fit*') then begin
 		;
 		; get to work and print our status
-		print,ig+1,'/',ng,names[ig],form='(i5,a1,i5,2x,a)'
+		print,ig+1,'/',nobj,names[ig],form='(i5,a1,i5,2x,a)'
 		;
 		; are we updating?
 		if keyword_set(update) then begin
@@ -85,12 +98,12 @@ for ig=0,ng-1 do begin
 		size = min([sz[ig]*60.,imsize])	; size in arcseconds
 		;
 		; test if not resizing
+		shfact = 1.
         	if not keyword_set(shrink) then begin
 	    		pxsiz = size / psc
 	    		if pxsiz gt 6000 then $
 		    	    print,'Warning - image will have dimensions: ', $
 			    	pxsiz,' by ', pxsiz
-			dorebin = (1 eq 0)
 		;
 		; calculate shrink factor
         	endif else begin
@@ -103,51 +116,23 @@ for ig=0,ng-1 do begin
 					shfact = shfact + 1.0
 					pxsiz = size / ( psc * shfact )
 				endwhile
-				if shfact le 1.0 then $
-					dorebin = (1 eq 0) $
-				else	dorebin = (1 eq 1)
 			; or use keyword shrink factor
-			endif else begin
-				shfact = shrink
-				dorebin = (1 eq 1)
-			endelse
+			endif else 	shfact = shrink
 		endelse
-		if dorebin then print,'Shrink factor = ',shfact,form='(a,f7.2)'
+		if shfact ne 1. then print,'Shrink factor = ',shfact,form='(a,f7.2)'
 		;
 		; loop over bands
 		for iband=0,nband-1 do begin
 			print,'Processing ',band[iband],' data...'
-			wise_extract,band[iband], $
-				names[ig]+'_'+band[iband]+'.fits',$
-                         	ra,dec,ps=psc,size=size, $
-				nolimit=nolimit,/verbose
-			;
-			; rebin if needed
-			if dorebin then begin
-				; image file
-				imfl = names[ig]+'_'+band[iband]+'.fits'
-				im = mrdfits(imfl,0,hdr,/fscale,/silent)
-				nx = fix(sxpar(hdr,'NAXIS1')/shfact)
-				ny = fix(sxpar(hdr,'NAXIS2')/shfact)
-				print,'Rebinning to ',nx,ny,' : ',imfl
-				hrebin,im,hdr,out=[nx,ny]
-				sxaddpar,hdr,'SHFACT',shfact,'Shrink Factor'
-				; keep photometry correct
-				mwrfits,im*shfact^2,imfl,hdr,/iscale,/create
-				; uncertainty file
-				imfl = names[ig]+'_'+band[iband]+'_unc.fits'
-				im = mrdfits(imfl,0,hdr,/fscale,/silent)
-				hrebin,im,hdr,out=[nx,ny]
-				sxaddpar,hdr,'SHFACT',shfact,'Shrink Factor'
-				mwrfits,im,imfl,hdr,/iscale,/create
-				; coverage file
-				imfl = names[ig]+'_'+band[iband]+'_cov.fits'
-				im = mrdfits(imfl,0,hdr,/fscale,/silent)
-				hrebin,im,hdr,out=[nx,ny]
-				sxaddpar,hdr,'SHFACT',shfact,'Shrink Factor'
-				mwrfits,im,imfl,hdr,/iscale,/create
-			endif else print,'No rebinning required...'
-			print,'Done processing ',names[ig],': ',band[iband], $
+			cmd = 'icore_atlas_wise ' + name[ig] + ' ' + $
+				string(ra,format='(f13.8)') + ' ' + $
+				string(dec,format='(f13.8)') + ' ' + $
+				string(size/3600.,format='(f8.5)') + ' ' + $
+				strn(iband+1) + ' ' + strn(psc*shfact) + $
+				' 2 | tee atlas_' + strn(iband+1) + '.log'
+			print,cmd
+			spawn,cmd
+			print,'Done processing ',name[ig],': ',band[iband], $
 				' data.'
 		endfor
 		tim = systime(1) - t0
