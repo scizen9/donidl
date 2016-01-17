@@ -1,5 +1,5 @@
 pro wise_atlas_driver,lfile,pxscl=pxscl,nolimit=nolimit, $
-	update=update, shrink=shrink
+	update=update, shrink=shrink, clean=clean
 ;+
 ; wise_atlas_driver - create coadded wise images from atlas images
 ; lfile - list of hosts with basic info: 
@@ -14,7 +14,7 @@ pro wise_atlas_driver,lfile,pxscl=pxscl,nolimit=nolimit, $
 readcol,lfile,names,sra,sdec,majdiam,mindiam,pa, $
 	format='a,d,d,f,f,f'
 nobj = n_elements(sra)
-name = strtrim(id,2)
+name = strtrim(names,2)
 ;
 ; check size limit
 ;
@@ -32,13 +32,14 @@ if nbg gt 0 then sz[bg] = majdiam[bg] * 3.0
 ;
 ; list of spectral bands
 band=['w1','w2','w3','w4']
+bandi = ['1','2','3','4']
 nband = n_elements(band)
 ;
 ; pixel scale
 if keyword_set(pxscl) then $
 	psc = pxscl $
 else	psc = 1.375
-print,'Using pixel scale ("/px) of ',psc
+print,'Starting with pixel scale ("/px) of ',psc
 ;
 ; directories
 root = !GLGA_WISE_DATA + 'data/sort/'
@@ -58,7 +59,7 @@ for ig=0,nobj-1 do begin
     if file_test(dir,/directory) then begin
       ;
       ; Do only if not processed already or requesting update
-      if not file_test(dir+'atlas/'+names[ig]+'_w1.fit*') or $
+      if not file_test(dir+'atlas1/'+names[ig]+'_w1.fit*') or $
 	 keyword_set(update) then begin
 	;
 	; go to directory
@@ -73,17 +74,9 @@ for ig=0,nobj-1 do begin
 		; are we updating?
 		if keyword_set(update) then begin
 			print,'Starting with a clean slate...'
-			spawn,'rm -rf atlas*'
-			spawn,'mkdir atlas'
+			spawn,'rm -rf atlas.log atlas_?.log atlas?'
 			print,'Done.'
-		endif else begin
-			if file_test('atlas',/directory) then begin
-				print,'Dir atlas already exists.'
-			endif else begin
-				print,'Making atlas dir.'
-				spawn,'mkdir atlas'
-			endelse
-		endelse
+		endif
 		;
 		; make a log file
 		openw,ol,'atlas.log',/get_lun
@@ -119,7 +112,7 @@ for ig=0,nobj-1 do begin
 			; or use keyword shrink factor
 			endif else 	shfact = shrink
 		endelse
-		if shfact ne 1. then print,'Shrink factor = ',shfact,form='(a,f7.2)'
+		print,'Shrink factor = ',shfact,form='(a,f7.2)'
 		;
 		; loop over bands
 		for iband=0,nband-1 do begin
@@ -128,7 +121,7 @@ for ig=0,nobj-1 do begin
 				string(ra,format='(f13.8)') + ' ' + $
 				string(dec,format='(f13.8)') + ' ' + $
 				string(size/3600.,format='(f8.5)') + ' ' + $
-				strn(iband+1) + ' ' + strn(psc*shfact) + $
+				bandi[iband] + ' ' + strn(psc*shfact) + $
 				' 2 | tee atlas_' + strn(iband+1) + '.log'
 			print,cmd
 			spawn,cmd
@@ -141,8 +134,12 @@ for ig=0,nobj-1 do begin
 		free_lun,ol
 		print,'Done : '+systime(0)
 		print,'Time : ',tim
-		spawn,'mv '+names[ig]+'_*.fits atlas'
-		spawn,'gzip atlas/'+names[ig]+'_*.fits &'
+		spawn,'gzip atlas?/'+names[ig]+'_*.fits &'
+		if keyword_set(clean) then begin
+			print,'Cleaning up...'
+			spawn,'rm atlas?/*-w?-*-3.fit*'
+			print,'Done cleaning up.'
+		endif
 		spawn,'gzip *-3.fits &'
 	endif
 	cd,cwd

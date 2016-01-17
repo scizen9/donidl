@@ -94,9 +94,6 @@ for ig=0L,nobj-1L do begin
 	; are there any files here?
 	if file_test('*-int-1b.fit*') then begin
 		;
-		; gunzip if we've done this before
-		spawn,'gunzip *-1b.*gz'
-		;
 		; get to work and print our status
 		print,ig+1,'/',nobj,name[ig],form='(i5,a1,i5,2x,a)'
 		;
