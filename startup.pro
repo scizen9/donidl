@@ -6,6 +6,8 @@ if strpos(!version.os,'linux') ge 0 then udir = 'users'
 if strpos(!version.os,'linux') ge 0 then sdir = 'users'
 loginfo = get_login_info()
 unam = loginfo.user_name
+if loginfo.machine_name eq 'pharos' then udir = 'home'
+if loginfo.machine_name eq 'pharos' then sdir = 'home'
 ;
 astrolib
 ;
