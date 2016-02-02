@@ -13,7 +13,7 @@ if file_test( savfile, /read, /regular ) then begin
 endif
 ;
 ; shouldn't get here
-print,'GLGA_STATUS_RESTORE: Error - no save file found: ',savfile
+print,'GLGA_STATUS_RESTORE: Error - no save file found: ',savfile,format='(a,a)'
 ;
 return
 end

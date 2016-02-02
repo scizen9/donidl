@@ -13,7 +13,7 @@ if file_test( savfile, /read, /regular ) then begin
 endif
 ;
 ; shouldn't get here
-print,'SNDB_RESTORE: Error - no save file found: ',savfil
+print,'SNDB_RESTORE: Error - no save file found: ',savfile,format='(a,a)'
 ;
 return
 end
