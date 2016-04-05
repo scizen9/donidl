@@ -103,7 +103,7 @@ IF(N_ELEMENTS(verbose) EQ 0)THEN verbose=0b
 struct_modtime = 1172765956L ;;Mar 3, 2007, 11:19am
 
 ;; maximum allowed number of wavelengths in each filter
-nmaxpoints=1400
+nmaxpoints=5000
 
 basedir = !PHOT_DATA
 filter_filename = basedir+'/filters.txt'
