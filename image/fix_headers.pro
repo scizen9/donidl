@@ -55,7 +55,7 @@
 ;	Written by:	Don Neill (neill@caltech.edu)
 ;	2016-JUN-10	Initial version (copied from pcwi_format_headers.pro)
 ;-
-pro fix_headers, hmf, flist, verbose=verbose
+pro fix_headers, flist, hmf, verbose=verbose
 ;
 ; program setup
 pre = 'FIX_HEADERS'
