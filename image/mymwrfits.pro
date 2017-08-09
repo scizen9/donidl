@@ -1197,7 +1197,7 @@ end
 pro mwr_findscale, flag, array, nbits, scale, offset, error
 
 
-    ims,array,mn,sg,wgt,siglim=100.
+    ims,array,mn,sg,wgt,siglim=25.
     g = where(wgt eq 1, ng)
     if ng le 0 then g = lindgen(n_elements(array))
     error = 0
