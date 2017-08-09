@@ -1197,12 +1197,15 @@ end
 pro mwr_findscale, flag, array, nbits, scale, offset, error
 
 
+    ims,array,mn,sg,wgt,siglim=100.
+    g = where(wgt eq 1, ng)
+    if ng le 0 then g = lindgen(n_elements(array))
     error = 0
     if n_elements(flag) eq 2 then begin
          scale  = double(flag[0])
         offset = double(flag[1])
     endif else if n_elements(flag) eq 1 and flag[0] ne 1 then begin
-         minmum = min(array, max=maxmum)
+         minmum = min(array[g], max=maxmum)
         offset = 0.d0
         scale  = double(flag[0])
     endif else if n_elements(flag) ne 1 then begin
@@ -1211,7 +1214,7 @@ pro mwr_findscale, flag, array, nbits, scale, offset, error
         return
     endif else begin
         
-         minmum = min(array, max=maxmum)
+         minmum = min(array[g], max=maxmum)
         scale  = (maxmum-minmum)/(2.d0^nbits)
         amin   = -(2.d0^(nbits-1))
         if (amin gt -130) then amin = 0  ; looking for -128
