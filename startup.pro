@@ -8,6 +8,7 @@ loginfo = get_login_info()
 unam = loginfo.user_name
 if loginfo.machine_name eq 'pharos' then udir = 'home'
 if loginfo.machine_name eq 'pharos' then sdir = 'home'
+if loginfo.machine_name eq 'kcrmcad' then udir = 'home'
 ;
 astrolib
 ;
@@ -50,8 +51,8 @@ defsysv,'!GLGA_MS_ROOT','/'+sdir+'/mseibert/glga/'
 defsysv,'!ZPEG_ROOT','/'+udir+'/'+unam+'/zpeg_5.17/'
 ;
 ; KCWI system variables
-defsysv,'!KCWI_DATA','/'+udir+'/'+unam+'/kcwi/pipeline/releases/kderp/data/'
-defsysv,'!CWI_DATA','/'+udir+'/'+unam+'/kcwi/pipeline/releases/kderp/cwi/'
+defsysv,'!KCWI_DATA','/'+udir+'/'+unam+'/kcwi/kderp/data/'
+defsysv,'!PCWI_DATA','/'+udir+'/'+unam+'/pcwi/pderp/data/'
 ;
 COMMON sndb_info,sndat
 COMMON galdb_info,galdat,gphsrc
