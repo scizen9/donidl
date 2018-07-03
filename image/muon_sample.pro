@@ -1,4 +1,4 @@
-function muon_sample, im, seg, sno, x, gplot=gplot
+function muon_sample, im, seg, sno, x, pk, gplot=gplot
 ;+
 ; muon_sample - return y trace of muon
 ;-
@@ -20,11 +20,13 @@ if nsvec gt 0 then begin
 	nfit = (y1 - y0) + 1
 	if nfit le 5 then begin
 		sig = -1.
+		pk = -1.
 	endif else begin
 		yf = yivec[y0:y1]
 		xf = findgen(nfit)
 		yfit = gaussfit(xf, yf, coef, nterm=4)
 		sig = coef[2]
+		pk = coef[0]
 		if keyword_set(gplot) then begin
 			q = ''
 			plot,xf,yf-coef[3],psym=5, $
@@ -33,7 +35,10 @@ if nsvec gt 0 then begin
 			read,'next: ',q
 		endif
 	endelse
-endif else 	sig = -1.
+endif else begin
+	sig = -1.
+	pk = -1.
+endelse
 ;
 ;
 return, sig

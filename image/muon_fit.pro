@@ -13,6 +13,8 @@ readcol,strmid(imf, 0, strpos(imf,'.'))+'_cr.cat', $
 thetas = thetas * !pi / 180.
 ;
 nseg = n_elements(sids)
+big = fltarr(nseg) - 1.
+small = fltarr(nseg) - 1.
 q=''
 ;
 for j = 0, nseg-1 do begin
@@ -30,7 +32,8 @@ for j = 0, nseg-1 do begin
 	nx = (xs[1] - xs[0]) + 1
 	;
 	; get larger muons within a certain angle
-	if yrms[j] le 0.6 and yrms[j] ge 0.52 and costh > 0.5 and nx gt 7 then begin
+	if yrms[j] le 0.6 and yrms[j] ge 0.52 and costh > 0.7 and $
+	   nx gt 9 then begin
 		xx = indgen(nx) + xs[0]
 		sg = fltarr(nx)
 		;
@@ -45,12 +48,41 @@ for j = 0, nseg-1 do begin
 		endfor
 		g = where(xx gt 0 and sg gt 0., ng)
 		if ng gt 0 then begin
-			plot,xx[g],sg[g],psym=-5, title='Seg: '+strn(sno)
-			oplot,xx[g],sg[g]*costh,psym=-6
-			read,'next: ',q
+			xx = xx[g]
+			sg = sg[g]
+			sgth = sg*costh
+			coef = linfit(xx,sgth,/double,yfit=yfit)
+			diff = sgth-yfit
+			ims_asym,diff,md,sgd,wgt,siglim=[3.,2.]
+			g = where(wgt eq 1)
+			b = where(wgt ne 1,nb)
+			;print,'nrej: '+strn(nb)
+			;xx = xx[g]
+			;sg = sg[g]
+			coef = linfit(xx[g],sgth[g],/double)
+			yfit = coef[0] + xx * coef[1]
+			plot,xx,sg,psym=-5, title='Seg: '+strn(sno)
+			oplot,xx,sgth,psym=-6
+			oplot,xx,yfit,linesty=2,thick=5
+			if nb gt 0 then oplot,xx[b],sgth[b],psym=2,symsi=2.
+			;
+			; store values
+			mm = minmax(yfit)
+			small[j] = mm[0]
+			big[j] = mm[1]
+			;read,'next: ',q
 		endif else print,'No good points'
 	endif
 endfor
+;
+; clean
+g = where(big gt 0, ng)
+big = big[g]
+small = small[g]
+;
+; final histo
+plothist,big,bin=0.05,xran=[0.,1.5]
+plothist,small,bin=0.05,/overplot,linesty=2
 ;
 return
 end
