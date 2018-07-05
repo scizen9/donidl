@@ -1,6 +1,6 @@
-pro muon_fit, gplot=gplot, mplot=mplot, hplot=hplot, ps=ps
+pro muon_fit, gplot=gplot, mplot=mplot, hplot=hplot, ps=ps, crplot=crplot
 ;+
-;  muon_fit - fit muons in the dark image
+;  muon_fit - fit muons in the dark image sets
 ;-
 ; initial params
 bs=0.025
@@ -72,22 +72,44 @@ for k=0,nf-1 do begin
 				ims_asym,diff,md,sgd,wgt,siglim=[3.,2.]
 				g = where(wgt eq 1)
 				b = where(wgt ne 1,nb)
-				;print,'nrej: '+strn(nb)
-				;xx = xx[g]
-				;sg = sg[g]
 				coef = linfit(xx[g],sgth[g],/double)
 				yfit = coef[0] + xx * coef[1]
-				if keyword_set(mplot) then begin
-					plot,xx,sg,psym=-5, title='Seg: '+strn(sno)
+				if keyword_set(crplot) then begin
+				if sno eq crplot then begin
+					psfile,'im08_cr'+strn(crplot)
+					deepcolor
+					!p.background=colordex('white')
+					!p.color=colordex('black')
+					!p.font=0
+					th=5
+					si=1.75
+					plot,xx,sg,psym=-5,  $
+						title='CR#: '+strn(sno), $
+	xthick=th,xtitle='X (px)',xcharsi=si, $
+	ythick=th,ytitle='!9s!3(px)',ycharsi=si,yran=[0.15,0.8],/ys, $
+	charthi=th,charsi=si,/nodata
 					oplot,xx,sgth,psym=-6
 					oplot,xx,yfit,linesty=2,thick=5
+					x = xx[g]
+					oplot,[x[0],x[0]],!y.crange,linesty=3
+					oplot,[x[-1],x[-1]],!y.crange,linesty=3
+					oplot,!x.crange,[1./sqrt(12.),1./sqrt(12.)], $
+						linesty=5
+					xyouts,1305,0.3,'1/12!U1/2!N',charsi=si,$
+						charthi=th
+					xyouts,1284,0.2,'MAX',charsi=si, $
+						charthi=th
+					xyouts,1325,0.2,'MIN',charsi=si, $
+						charthi=th
 					if nb gt 0 then oplot,xx[b],sgth[b], $
 								psym=2,symsi=2.
-					read,'next: ',q
+					psclose
+					;read,'next: ',q
+				endif
 				endif
 				;
 				; store values
-				mm = minmax(yfit)
+				mm = minmax(yfit[g])
 				small[j] = mm[0]
 				big[j] = mm[1]
 				allsmall[p] = mm[0]
@@ -119,7 +141,9 @@ allbig = allbig[g]
 allsmall = allsmall[g]
 print,'N Crs: '+strn(ng)
 diflen = sqrt(allbig*allbig - allsmall*allsmall) * 15.0
+diflen2 = sqrt(allbig*allbig - 0.08333) * 15.0
 hd = histogram(diflen,bin=0.1,max=50.,loc=hx)
+hd2 = histogram(diflen2,bin=0.1,max=50.,loc=hx2)
 
 if keyword_set(ps) then begin
 	psfile,cwd+'_difflen'
@@ -132,13 +156,19 @@ th=5
 si=1.75
 
 tlab = cwd + ' - ALL '+strn(nf)+' images, '+strn(ng)+' muon CRs'
-plot,hx,hd,psym=10,title=tlab,xran=[5,15],/xs, $
-	xthick=th,xtitle='Diffusion Length (micrometers)',xcharsi=si, $
+plot,hx2,hd2,psym=10,title=tlab,xran=[5,15],/xs, $
+	xthick=th,xtitle='Diffusion Length (!9m!3-m)',xcharsi=si, $
 	ythick=th,ytitle='N',ycharsi=si, $
 	charthi=th,charsi=si
+medl2 = median(diflen2)
+oplot,[medl2,medl2],!y.crange
+oplot,hx,hd,psym=10,linesty=2
 medl = median(diflen)
-oplot,[medl,medl],!y.crange
+oplot,[medl,medl],!y.crange,linesty=2
+legend,['!9s!3!DMAX!N - !9s!3!DMIN!N', '!9s!3!DMAX!N - 1/12!U1/2!N'], $
+	linesty=[2,0],charsi=1.25,charthi=th,box=0,spac=2.
 print,'Median diffusion length (microns): ',medl,format='(a,f9.3)'
+print,'Median diffusion length 2 (microns): ',medl2,format='(a,f9.3)'
 ;
 if keyword_set(ps) then psclose
 ;
