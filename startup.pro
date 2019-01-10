@@ -9,6 +9,7 @@ unam = loginfo.user_name
 if loginfo.machine_name eq 'pharos' then udir = 'home'
 if loginfo.machine_name eq 'pharos' then sdir = 'home'
 if loginfo.machine_name eq 'kcrmcad' then udir = 'home'
+if loginfo.user_name eq 'sedmdrp' then udir = 'scr2'
 ;
 astrolib
 ;
