@@ -1,4 +1,4 @@
-pro muon_fit, gplot=gplot, mplot=mplot, hplot=hplot, ps=ps, crplot=crplot
+pro muon_fit, gplot=gplot, hplot=hplot, ps=ps, crplot=crplot
 ;+
 ;  muon_fit - fit muons in the dark image sets
 ;-
@@ -142,8 +142,14 @@ allsmall = allsmall[g]
 print,'N Crs: '+strn(ng)
 diflen = sqrt(allbig*allbig - allsmall*allsmall) * 15.0
 diflen2 = sqrt(allbig*allbig - 0.08333) * 15.0
+mo = moment(diflen[where(diflen le 50)])
+mo2 = moment(diflen2[where(diflen2 le 50)])
 hd = histogram(diflen,bin=0.1,max=50.,loc=hx)
 hd2 = histogram(diflen2,bin=0.1,max=50.,loc=hx2)
+print,'mean diff  = '+string(mo[0],form='(f10.2)') + ' +- ' + $
+	string(sqrt(mo[1]), form='(f10.2)')
+print,'mean diff2 = '+string(mo2[0],form='(f10.2)') + ' +- ' + $
+	string(sqrt(mo2[1]), form='(f10.2)')
 
 if keyword_set(ps) then begin
 	psfile,cwd+'_difflen'
