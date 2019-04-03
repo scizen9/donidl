@@ -1,4 +1,5 @@
 pro lcur
+lcur_init
 ;
 ;
 q = ''	; input action
