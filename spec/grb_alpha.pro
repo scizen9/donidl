@@ -2,7 +2,7 @@
 ; grb_alpha - fit power law to GRB spectrum
 ;
 ;-
-pro grb_alpha, ifil, wave0, wave1, lambda=lambda, title=title
+pro grb_alpha, ifil, wave0, wave1, lambda=lambda, title=title, savefile=savefile
 ;
 rdfits1dspec,ifil,wave,flux
 fr = where(wave gt wave0 and wave lt wave1, nfit)
@@ -21,8 +21,9 @@ if keyword_set(lambda) then begin
 	yall = flux
 	xdata = wave[fr]
 	ydata = flux[fr]
-	xlab = 'WAVELENGTH (A)'
-	ylab = 'Flambda (erg/s/cm^2/A)'
+	xlab = 'WAVELENGTH ($\AA$)'
+	ylab = '$F_{\lambda}\ (erg s^{-1} cm^{-2} \AA^{-1})$'
+	lpos = [0.9, 0.3]
 ; convert to nu and Fnu
 endif else begin
 	xall = 2.998e+18/wave
@@ -30,7 +31,8 @@ endif else begin
 	xdata = xall[fr]
 	ydata = yall[fr]
 	xlab = 'FREQUENCY (Hz)'
-	ylab = 'Fnu (erg/s/cm^2/Hz)'
+	ylab = '$F_{\nu}\ (erg s^{-1} cm^{-2} Hz^{-1})$'
+	lpos = [0.4, 0.3]
 endelse
 ;
 ; power-law fit
@@ -52,13 +54,18 @@ while yran[0] lt 0 do begin
 endwhile
 print,pf,yran
 ;
-plot, xall, yall, /ylog, /xlog, /xs, xtitle=xlab, ytitle=ylab, title=tlab, $
-	yran=yran,/ys, xthick=th, ythick=th, charsi=si, charthi=th, psym=10
-oplot, xdata, 10.^y_fit, linesty=2, thick=5
+xran = [min(xall), max(xall)]
+p = plot( xall, yall, /ylog, /xlog, xtitle=xlab, ytitle=ylab, title=tlab, $
+	yran=yran,xthick=th, ythick=th, font_size=12,/stairstep, $
+	name='Data', xran=xran, /xstyle, /ystyle)
+p2 = plot( xdata, 10.^y_fit, linesty=2, thick=5,/overplot, $
+	name='$\alpha = $'+string(-res[1], form='(f5.3)'))
+leg = legend(target=[p,p2], position=lpos)
 
-;
-legend,['Data', 'alpha = '+string(-res[1], form='(f5.3)')], linesty=[0,2], $
-	thick=[0, 5],/left,/bottom, charsi=si, charthi=th
+if keyword_set(savefile) then begin
+	p.save, savefile
+	print,'saved plot to '+savefile
+endif
 ;
 print,'alpha = ', -res[1], format='(a, f7.3)'
 end
