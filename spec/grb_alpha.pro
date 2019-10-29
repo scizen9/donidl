@@ -5,6 +5,11 @@
 pro grb_alpha, ifil, wave0, wave1, lambda=lambda, title=title, savefile=savefile
 ;
 rdfits1dspec,ifil,wave,flux
+;
+; check inputs
+if n_elements(wave0) ne 1 then wave0 = min(wave)
+if n_elements(wave1) ne 1 then wave1 = max(wave)
+;
 fr = where(wave gt wave0 and wave lt wave1, nfit)
 print,'fitting ', nfit, ' points'
 if nfit le 3 then begin
