@@ -1,4 +1,4 @@
-pro muon_fit, gplot=gplot, hplot=hplot, ps=ps, crplot=crplot
+pro muon_fit, gplot=gplot, hplot=hplot, ps=ps, crplot=crplot, verbose=verbose, ptc=ptc
 ;+
 ;  muon_fit - fit muons in the dark image sets
 ;-
@@ -7,10 +7,22 @@ bs=0.025
 cd,current=cwd
 sta=strsplit(cwd,'/',/extract)
 cwd = sta[n_elements(sta)-1]
+;
+; keywords
+if keyword_set(ptc) then begin
+	mw0 = 0.62
+	mw1 = 0.73
+	xlim = [5,20]
+endif else begin
+	mw0 = 0.52
+	mw1 = 0.60
+	xlim = [5,15]
+endelse
 ; read data
 ;
 ; get image list
 imlist = file_search('im??.fits', count=nf)
+if nf le 0 then imlist = file_search('im???.fits', count=nf)
 allbig = fltarr(5000)
 allsmall = fltarr(5000)
 p = 0L
@@ -18,11 +30,11 @@ p = 0L
 ; loop over images
 for k=0,nf-1 do begin
     imf = imlist[k]
-    im = mrdfits(imf, 0, imhdr)
-    seg = mrdfits(strmid(imf, 0, strpos(imf,'.'))+'_seg.fits', 0, sghdr)
+    im = mrdfits(imf, 0, imhdr, /silent)
+    seg = mrdfits(strmid(imf, 0, strpos(imf,'.'))+'_seg.fits', 0, sghdr,/silent)
     readcol,strmid(imf, 0, strpos(imf,'.'))+'_cr.cat', $
 	sids, xs, ys, xrms, yrms, thetas, format='i,f,f,f,f,f', $
-	comment='#'
+	comment='#',/silent
     ;
     ; convert thetas to radians
     thetas = thetas * !pi / 180.
@@ -48,8 +60,10 @@ for k=0,nf-1 do begin
 		nx = (xs[1] - xs[0]) + 1
 		;
 		; get larger muons within a certain angle
-		if yrms[j] le 0.6 and yrms[j] ge 0.52 and costh > 0.7 and $
-	   	nx gt 9 then begin
+		if yrms[j] ge mw0 and yrms[j] le mw1 and costh ge 0.7 and $
+	   	xrms[j] gt 9. then begin
+			if keyword_set(verbose) then $
+				print,'seg # '+strn(sno)+' passed'
 			xx = indgen(nx) + xs[0]
 			sg = fltarr(nx)
 			;
@@ -162,7 +176,7 @@ th=5
 si=1.75
 
 tlab = cwd + ' - ALL '+strn(nf)+' images, '+strn(ng)+' muon CRs'
-plot,hx2,hd2,psym=10,title=tlab,xran=[5,15],/xs, $
+plot,hx2,hd2,psym=10,title=tlab,xran=xlim,/xs, $
 	xthick=th,xtitle='Diffusion Length (!9m!3-m)',xcharsi=si, $
 	ythick=th,ytitle='N',ycharsi=si, $
 	charthi=th,charsi=si
@@ -171,7 +185,7 @@ oplot,[medl2,medl2],!y.crange
 oplot,hx,hd,psym=10,linesty=2
 medl = median(diflen)
 oplot,[medl,medl],!y.crange,linesty=2
-legend,['!9s!3!DMAX!N - !9s!3!DMIN!N', '!9s!3!DMAX!N - 1/12!U1/2!N'], $
+my_legend,['!9s!3!DMAX!N - !9s!3!DMIN!N', '!9s!3!DMAX!N - 1/12!U1/2!N'], $
 	linesty=[2,0],charsi=1.25,charthi=th,box=0,spac=2.
 print,'Median diffusion length (microns): ',medl,format='(a,f9.3)'
 print,'Median diffusion length 2 (microns): ',medl2,format='(a,f9.3)'
