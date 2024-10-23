@@ -1,28 +1,37 @@
-pro muon_fit, gplot=gplot, hplot=hplot, ps=ps, crplot=crplot, verbose=verbose, ptc=ptc
+pro muon_fit, imspec=imspec, gplot=gplot, hplot=hplot, ps=ps, crplot=crplot, $
+              muon_window_low=muon_window_low, muon_window_high=muon_window_high, $
+              verbose=verbose
 ;+
 ;  muon_fit - fit muons in the dark image sets
 ;-
 ; initial params
-bs=0.025
+bs=0.025    ; bin size
 cd,current=cwd
 sta=strsplit(cwd,'/',/extract)
 cwd = sta[n_elements(sta)-1]
 ;
 ; keywords
-if keyword_set(ptc) then begin
-	mw0 = 0.62
-	mw1 = 0.73
-	xlim = [5,20]
+if keyword_set(imspec) then begin
+    print,'Searching for ',imspec
 endif else begin
-	mw0 = 0.52
-	mw1 = 0.60
-	xlim = [5,15]
+    imspec = '*.fits'
+    print,'Searching for *.fits'
 endelse
+if keyword_set(muon_window_low) then $
+    mw0 = muon_window_low $
+else $
+    mw0 = 0.50
+if keyword_set(muon_window_high) then $
+    mw1 = muon_window_high $
+else $
+    mw1 = 0.60
+
+xlim = [5,15]
 ; read data
 ;
 ; get image list
-imlist = file_search('im??.fits', count=nf)
-if nf le 0 then imlist = file_search('im???.fits', count=nf)
+imlist = file_search(imspec, count=nf)
+print,'Found ',nf, 'files'
 allbig = fltarr(5000)
 allsmall = fltarr(5000)
 p = 0L
